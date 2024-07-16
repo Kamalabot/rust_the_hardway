@@ -14,7 +14,18 @@ enum BoxColor{
     Blue,
     Brown
     }
-// * Use a struco to encapsulate the box characteristics
+
+impl BoxColor{
+   fn print(&self){
+    match self {
+        BoxColor::Red => println!("Red printed by Impl"),
+        BoxColor::Green => println!("Green printed by Impl"),
+        BoxColor::Blue => println!("Blue printed by Impl"),
+        BoxColor::Brown => println!("Brown printed by Impl"),
+    }
+   } 
+}
+// * Use a struct to encapsulate the box characteristics
 struct Box {
     dims: (i32, i32, i32),
     weight: f64,
@@ -45,6 +56,7 @@ impl Box {
            BoxColor::Brown => "Brown", 
         };
         println!("Box color is {}", printcol);
+        self.color.print(); // calls the impl of enum boxcolor
         println!("Box Weight is: {}", &self.weight)
     }
 }

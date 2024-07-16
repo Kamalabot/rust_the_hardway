@@ -1,0 +1,48 @@
+[submodule "wgpu02"]
+	path = wgpu02
+	url = https://github.com/jack1232/wgpu02
+[submodule "wgpu03"]
+	path = wgpu03
+	url = https://github.com/jack1232/wgpu03
+[submodule "wgpu04"]
+	path = wgpu04
+	url = https://github.com/jack1232/wgpu04
+[submodule "wgpu06"]
+	path = wgpu06
+	url = https://github.com/jack1232/wgpu06
+[submodule "wgpu07"]
+	path = wgpu07
+	url = https://github.com/jack1232/wgpu07
+[submodule "wgpu08"]
+	path = wgpu08
+	url = https://github.com/jack1232/wgpu08
+[submodule "wgpu09"]
+	path = wgpu09
+	url = https://github.com/jack1232/wgpu09
+[submodule "wgpu10"]
+	path = wgpu10
+	url = https://github.com/jack1232/wgpu10
+[submodule "wgpu11"]
+	path = wgpu11
+	url = https://github.com/jack1232/wgpu11
+[submodule "wgpu12"]
+	path = wgpu12
+	url = https://github.com/jack1232/wgpu12
+[submodule "wgpu13"]
+	path = wgpu13
+	url = https://github.com/jack1232/wgpu13
+[submodule "wgpu14"]
+	path = wgpu14
+	url = https://github.com/jack1232/wgpu14
+[submodule "wgpu15"]
+	path = wgpu15
+	url = https://github.com/jack1232/wgpu15
+[submodule "wgpu16"]
+	path = wgpu16
+	url = https://github.com/jack1232/wgpu16
+[submodule "wgpu17"]
+	path = wgpu17
+	url = https://github.com/jack1232/wgpu17
+[submodule "wgpu18"]
+	path = wgpu18
+	url = https://github.com/jack1232/wgpu18

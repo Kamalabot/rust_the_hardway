@@ -1,0 +1,22 @@
+[workspace]
+
+members=[
+    "app01",
+    "lib01", "lib02",
+]
+default-members = [
+    "app01","lib01","lib02"
+]
+resolver="2"
+# - Workspace Warmup:
+    # - create Cargo.toml with virtual workspace
+    # - add two crates as members into the workspace
+    # - create those crates using cargo new, 
+    # - add another crate that is a library
+    # - create a module inside the library crate
+    # - add the library and crate02 as dependency in crate01 using cargo add
+    # - add a new lib crate into the workspace, and remove it from main Cargo.toml
+    # - add the lib02 as dep using --path option in crate01
+    # - add lib01, uuid as deps to crate01
+    # - try to add default_members, and build only those crates specifically
+    # - use cargo clean, build and run 

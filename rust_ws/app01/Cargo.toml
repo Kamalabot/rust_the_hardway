@@ -1,0 +1,10 @@
+[package]
+name = "app01"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+lib01 = { version = "0.1.0", path = "../lib01" }
+lib02 = { version = "0.1.0", path = "../lib02" }
+lib04 = { version = "0.1.0", path = "../lib04" }
+uuid = { version = "1.10.0", features = ["v4"] }

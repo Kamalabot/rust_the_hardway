@@ -1,7 +1,7 @@
 [workspace]
 
-members = [
+members = [ "enumin",
     "guesser",
-    "listerator", "owningrs",
+    "listerator", "owningrs", "structs",
 ]
 resolver = "2"

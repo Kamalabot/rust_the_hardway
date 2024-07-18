@@ -20,10 +20,12 @@ impl Rectangle {
         self.width * self.height
     }
     fn can_hold(&self, other: Rectangle) -> bool {
-        
+        other.height < self.height && other.width < self.width
     }
 }
-
+struct QuitMessage; // unit struct
+struct WriteMessage(String); // tuple struct
+struct ChangecolorMessage(i32, i32, i32, i32); // tuple struct
 fn main(){
     let mut user1 = User{
         username:"Chakana".to_owned(),
@@ -50,6 +52,12 @@ fn main(){
     };
 
     println!("The area of {:?} is {}", rect1, rect1.area());
+    
+    let rect2 = Rectangle{
+        height:3,
+        width:3,
+    };
+    println!("{:?}", rect1.can_hold(rect2));
 
 }
 

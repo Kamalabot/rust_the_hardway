@@ -96,7 +96,24 @@ fn authorize(
     employee_name: &str,
     location: ProtectedLocation,
 ) -> Result<AuthorizationStatus, String> {
-    // put your code here
+    // 1. Connect to the database
+    let connect_status = Database::connect()?;
+    // 2. Find the employee with the `find_employee` database function
+    let employee_located = connect_status.find_employee(employee_name)?;
+    println!("{:?}", employee_located);
+    // 3. Get a keycard with the `get_keycard` database function
+    let employee_keycard = connect_status.get_keycard(&employee_located)?;
+    // 4. Determine if the keycard's `access_level` is sufficient, using the
+    //    `required_access_level` function implemented on `ProtectedLocation`.
+    let a_lev = location.required_access_level();
+    let emp_a_lev = employee_keycard.access_level;
+    // * Higher `access_level` values grant more access to `ProtectedLocations`.
+    if emp_a_lev >= a_lev{
+        Ok(AuthorizationStatus::Allow)
+    } else {
+        Ok(AuthorizationStatus::Deny)
+    } 
+    //   1000 can access 1000 and lower. 800 can access 500 but not 1000, ...
 }
 
 fn main() {
@@ -110,7 +127,11 @@ fn main() {
     // She doesn't have a keycard, so this should be an error.
     let catherine_authorized = authorize("Catherine", ProtectedLocation::Warehouse);
 
-    println!("{anita_authorized:?}");
-    println!("{brody_authorized:?}");
-    println!("{catherine_authorized:?}");
+    // println!("{anita_authorized:?}", anita_authorized);
+    // println!("{brody_authorized:?}", brody_authorized);
+    // println!("{catherine_authorized:?}", catherine_authorized);
+    println!("{:?}", anita_authorized);
+    println!("{:?}", brody_authorized);
+    println!("{:?}", catherine_authorized);
+
 }

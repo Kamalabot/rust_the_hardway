@@ -35,10 +35,10 @@ fn print_choice(choice: &MenuChoice) {
 
 fn pick_choice(input: &str)-> Result<(), String>{
     let choice = get_choice(input)?;
-    // ? automaticall does a match on the returned menu 
-    // choice, and sends the error to the called function
+    // ? automaticall does a match on the returned Result object 
+    // and sends the error to the called function
     print_choice(&choice);
-    Ok(())
+    Ok(()) // function has to return Ok(()) as updated above
 }
 fn main(){
     // let mut in_str = String::new();
@@ -53,7 +53,7 @@ fn main(){
         // // the analyzer asked to use ref
         // Ok(ref in_choice) => print_choice(&in_choice),
         // Err(ref e) => println!("Error: {:?}", e)
-    // }
+    // } // match helps to access the MenuChoice from result
     // println!("{:?}", out);
     // let _ = pick_choice("start");
     let _ = pick_choice("mainmenu");

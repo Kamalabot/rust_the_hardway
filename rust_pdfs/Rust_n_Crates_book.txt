@@ -1,0 +1,4 @@
+https://doc.rust-lang.org/beta/book/title-page.html : the book
+https://doc.rust-lang.org/nomicon/ : nomicon
+https://doc.rust-lang.org/cargo/ : cargo
+https://rust-random.github.io/book/ : rand

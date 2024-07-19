@@ -3,7 +3,9 @@ fn array_and_vec() -> ([i32; 4], Vec<i32>) {
 
     // TODO: Create a vector called `v` which contains the exact same elements as in the array `a`.
     // Use the vector macro.
-    // let v = ???;
+    // let v = vec![*a]; cannot deref array 
+    // let v = vec![a[..]]; // doesn't use a size known at compile time  
+    let v = vec![a[0], a[1], a[2], a[3]]; 
 
     (a, v)
 }

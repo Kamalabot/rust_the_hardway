@@ -9,10 +9,11 @@ mod tests {
     #[test]
     fn move_semantics4() {
         let mut x = Vec::new();
-        let y = &mut x;
-        let z = &mut x;
-        y.push(42);
-        z.push(13);
+        // note the source is mutable
+        let y = &mut x;  // barrow mutably
+        y.push(42); // operate
+        let z = &mut x; // barrow again
+        z.push(13); // operate
         assert_eq!(x, [42, 13]);
     }
 }

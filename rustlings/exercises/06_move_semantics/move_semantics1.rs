@@ -1,10 +1,11 @@
 // TODO: Fix the compiler error in this function.
 fn fill_vec(vec: Vec<i32>) -> Vec<i32> {
-    let vec = vec;
-
+    let mut vec = vec;
+    // here the vector from outside is assigned 
+    // to a new vec inside
     vec.push(88);
 
-    vec
+    vec // then that is returned
 }
 
 fn main() {

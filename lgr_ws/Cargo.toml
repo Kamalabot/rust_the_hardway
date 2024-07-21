@@ -1,7 +1,7 @@
 [workspace]
 
-members = [ "collections", "csv_read", "enumin", "generico",
+members = [ "closures", "collections", "csv_read", "enumin", "generico",
     "guesser", "handlin_error",
-    "listerator", "owningrs", "pkg", "restaurant", "serde_use", "structs", "testit", "traito", "web_reqs",
+    "listerator", "ooping", "owningrs", "pkg", "restaurant", "serde_use", "structs", "testit", "traito", "web_reqs",
 ]
 resolver = "2"

@@ -1,0 +1,10 @@
+[package]
+name = "ai_practice"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# -- Async
+tokio = { version = "1.25.0", features = ["full"]}
+# -- AI
+genai = "0.1.5"

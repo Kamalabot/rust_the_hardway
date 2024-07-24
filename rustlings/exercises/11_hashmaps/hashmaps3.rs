@@ -14,6 +14,14 @@ struct Team {
     goals_scored: u8,
     goals_conceded: u8,
 }
+impl Team {
+    fn new(goals_scored: u8, goals_conceded: u8) -> Self {
+        Self {
+            goals_scored,
+            goals_conceded
+        }
+    }
+}
 
 fn build_scores_table(results: &str) -> HashMap<&str, Team> {
     // The name of the team is the key and its associated struct is the value.
@@ -26,12 +34,33 @@ fn build_scores_table(results: &str) -> HashMap<&str, Team> {
         let team_2_name = split_iterator.next().unwrap();
         let team_1_score: u8 = split_iterator.next().unwrap().parse().unwrap();
         let team_2_score: u8 = split_iterator.next().unwrap().parse().unwrap();
-        println!("team1_n:{team_1_name}, team2_n: {team_2_name}, team1_s: {team_1_score}, team2_s: {team_2_score}");
+        // println!("team1_n:{team_1_name}, team2_n: {team_2_name}, team1_s: {team_1_score}, team2_s: {team_2_score}");
         // TODO: Populate the scores table with the extracted details.
         // Keep in mind that goals scored by team 1 will be the number of goals
         // conceded by team 2. Similarly, goals scored by team 2 will be the
         // number of goals conceded by team 1.
-        // find if the team is present in the hashmap
+        // if there is no entry for england, then it will insert the new Team struct 
+        if scores.contains_key(team_1_name){
+            let curr_score = scores.get(team_1_name).unwrap();
+            let update_score = Team::new(curr_score.goals_scored + team_1_score,
+                                        curr_score.goals_conceded + team_2_score);
+            scores.insert(team_1_name, update_score);
+        } else {
+            let team_score = Team::new(team_1_score, team_2_score);
+            scores.insert(team_1_name, team_score);
+        }
+        if scores.contains_key(team_2_name){
+            let curr_score = scores.get(team_2_name).unwrap();
+            let update_score = Team::new(curr_score.goals_scored + team_2_score,
+                                        curr_score.goals_conceded + team_1_score);
+            scores.insert(team_2_name, update_score);
+        } else {
+            let team_score = Team::new(team_2_score, team_1_score);
+            scores.insert(team_2_name, team_score);
+        }
+    }
+    for (key, value) in &scores{
+        println!("{} score is {:?}", key, value);
     }
     scores
 }
@@ -60,6 +89,7 @@ England,Spain,1,0";
     }
 
     #[test]
+    // #[ignore]
     fn validate_team_score_1() {
         let scores = build_scores_table(RESULTS);
         let team = scores.get("England").unwrap();
@@ -68,6 +98,7 @@ England,Spain,1,0";
     }
 
     #[test]
+    // #[ignore]
     fn validate_team_score_2() {
         let scores = build_scores_table(RESULTS);
         let team = scores.get("Spain").unwrap();

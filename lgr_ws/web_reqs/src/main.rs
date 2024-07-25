@@ -4,7 +4,7 @@
 use reqwest::blocking::{Client, ClientBuilder};
 use serde::{Serialize, Deserialize};
 use serde_json::from_str;
-
+use std::collection::Hashmap;
 #[derive(Serialize, Deserialize, Debug)]
 struct Typicode {
     userId: i32,

@@ -27,34 +27,33 @@ mod my_module {
     use super::Command;
 
     // TODO: Complete the function.
-    pub fn transformer(input: Vec<(String, Command)>) -> Vec<&str> {
-        let new_vec = Vec::new();
+    pub fn transformer(input: Vec<(String, Command)>) -> Vec<String> {
+        let mut new_vec = Vec::new();
 
         for data in input.into_iter(){ 
-            // println!("{:?}", data);
 
-            let your_string = data.0;
+            let mut your_string = data.0;
             let command = data.1;
             println!("String {}", your_string);
+            // depending on the command, the operation will be undertaken
 
-//             match command {
-                // Command::Uppercase => your_string.to_uppercase(), 
-                // Command::Trim => your_string.to_string().trim(), 
-                // Command::Append(val) => {
-                    // let mut x: usize = 0;
-                    // // &str doesn't have push_str method
-                    // let mut local_string = your_string.to_string();
-                    // // need to use loop, there is no for(, ,) syntax
-                    // loop {
-                        // local_string.push_str("bar");
-                        // x += 1;
-                        // if x > val{
-                            // break;
-                        // }
-                    // }
-                // }
-            // }
-            // new_vec.push(your_string);
+            match command {
+                Command::Uppercase => new_vec.push(your_string.to_uppercase()),
+                Command::Trim => new_vec.push(your_string.trim().to_string()),
+                Command::Append(val) => {
+                    println!("Entering here...");
+                    let mut mx: usize= 0;
+                    loop {
+                        your_string.push_str("bar"); 
+                        mx += 1;
+                        if mx > val - 1 {
+                            break
+                        }
+                    }
+                    // update the string into the vector
+                    new_vec.push(your_string);
+                }
+            }
         }
         new_vec
     }

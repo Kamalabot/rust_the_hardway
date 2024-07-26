@@ -1,0 +1,7 @@
+Blocking waiting for file lock on package cache
+Compiling mingrep v0.1.0 (D:\gitFolders\rust_the_hardway\mingrep)
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.03s
+Running `target\debug\mingrep.exe query file2`
+All cli words ["target\\debug\\mingrep.exe", "query", "file2"]
+file to search: "query"
+All cli words "file2"

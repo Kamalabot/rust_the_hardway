@@ -1,0 +1,11 @@
+[workspace.lints.rust]
+unsafe_code = "forbid"
+# unused = "allow" # For experimental dev.
+
+[workspace]
+resolver = "2"
+members = [
+    "crates/ai-buddy", # The core/main library used by ai-buddy-cli
+    "crates/ai-buddy-cli", # The CLI for ai-buddy  
+    "crates/ai-buddy-app", # (Upcoming) Tauri App
+]

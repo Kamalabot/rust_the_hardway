@@ -21,11 +21,18 @@ fn total_cost(item_quantity: &str) -> Result<i32, ParseIntError> {
     let cost_per_item = 5;
 
     // TODO: Handle the error case as described above.
-    let qty = item_quantity.parse::<i32>();
-    match qty {
-        Ok(qty) => Ok(qty * cost_per_item + processing_fee),
-        Err(val) => ParseIntError("Only enter number.")
-    }
+    let qty = item_quantity.parse::<i32>()?;
+    // match qty {
+        // Ok(qty) => Ok(qty * cost_per_item + processing_fee),
+        // we want to handle when the string is not parsing to number
+        // Err(error) => match error.kind() {
+            // IntErrorKind::InvalidDigit => println!("invalid digit"),
+            // other => panic!("The input is invalid")
+        // } 
+        // Err(error) => panic!("{:?}", error.kind())
+        //Err(error) => return error.kind()
+    //}
+    Ok(qty * cost_per_item + processing_fee)
 }
 
 fn main() {
@@ -49,4 +56,19 @@ mod tests {
             &IntErrorKind::InvalidDigit,
         );
     }
+    // unwrap pulls the Ok() part out
+    // unwrap_error pull Error() part out
+    // unwrap_or default, returns a default value, in this case 2
+    // unwrap_or_else, can work on closures when Ok() part is returned 
+    #[test]
+    fn item_qty_isinvalid(){
+        let x = total_cost("double gain").unwrap_or(2);
+        assert_eq!(x , 2)
+    }
+    // need a different setup for unwrap_or_else
+    // #[test]
+    // fn item_qty_unwrap_or_else(){
+        // let x = total_cost("double gain").unwrap_or_else(|op| op.kind());
+        // assert_eq!(x , &IntErrorKind::InvalidDigit)
+    // }
 }

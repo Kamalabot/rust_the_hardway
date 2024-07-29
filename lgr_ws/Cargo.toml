@@ -2,6 +2,6 @@
 
 members = [ "ai_practice", "closures", "collections", "csv_read", "enumin", "generico", "grpc_explore",
     "guesser", "handlin_error",
-    "listerator", "ooping", "owningrs", "pkg", "restaurant", "serde_use", "structs", "testit", "traito", "web_reqs",
+    "listerator", "ooping", "owningrs", "pkg", "restaurant", "rocket-chat", "serde_use", "structs", "testit", "traito", "web_reqs",
 ]
 resolver = "2"

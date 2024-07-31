@@ -4,7 +4,11 @@ fn main() {
 }
 
 fn pass_validator(your_pass: String) -> String{
-    "Don' know".to_owned()
+    if your_pass == "nice_pass"{
+        "Accepted".to_owned()
+    } else {
+        "I don't Know you".to_owned()
+    }
 }
 
 #[cfg(test)]

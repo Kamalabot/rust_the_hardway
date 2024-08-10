@@ -2,7 +2,7 @@
 
 use std::io::*;
 
-fn operate_numbers(d1: i32, d2: i32) {
+fn operate_numbers(d1, d2: i32) {
     println!("{} + {} = {}", d1, d2, d1 + d2); 
     println!("{} - {} = {}", d1, d2, d1 - d2); 
     println!("{} * {} = {}", d1, d2, d1 * d2); 

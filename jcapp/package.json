@@ -1,0 +1,23 @@
+{
+  "name": "jcapp",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "tauri": "tauri",
+    "localhost": "./node_modules/.bin/servor src index.html 8080 --reload",
+    "ui-build": "./node_modules/.bin/rollup -c",
+    "ui-dev": "./node_modules/.bin/rollup -c -w  & npm run localhost"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@tauri-apps/cli": "^1",
+    "rollup": "^4.20.0",
+    "tslib": "^2.6.3",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "servor": "^4.0.2"
+  }
+}

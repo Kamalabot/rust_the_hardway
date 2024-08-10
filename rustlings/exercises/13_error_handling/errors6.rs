@@ -3,7 +3,7 @@
 // content instead of printing it out or propagating it further. Here, we define
 // a custom error type to make it possible for callers to decide what to do next
 // when our function returns an error.
-
+#[allow(dead_code)]
 use std::num::ParseIntError;
 
 #[derive(PartialEq, Debug)]
@@ -24,7 +24,8 @@ impl ParsePosNonzeroError {
         ParsePosNonzeroError::Creation(err)
     }
 
-    // TODO: Add another error conversion function here.
+
+    // Done: Add another error conversion function here.
     fn from_parseint(err: ParseIntError) -> Self {
         ParsePosNonzeroError::ParseInt(err)
      }
@@ -39,7 +40,7 @@ fn parse_pos_nonzero(s: &str) -> Result<PositiveNonzeroInteger, ParsePosNonzeroE
 struct PositiveNonzeroInteger(u64);
 
 impl PositiveNonzeroInteger {
-    fn new(value: i64) -> Result<Self, CreationError> {
+    fn new(value: i64) -> Result<PositiveNonzeroInteger, CreationError> {
         match value {
             x if x < 0 => Err(CreationError::Negative),
             x if x == 0 => Err(CreationError::Zero),
@@ -50,8 +51,9 @@ impl PositiveNonzeroInteger {
     fn parse(s: &str) -> Result<Self, ParsePosNonzeroError> {
         // TODO: change this to return an appropriate error instead of panicking
         // when `parse()` returns an error.
-        let x: i64 = s.parse().unwrap();
-        Self::new(x).map_err(ParsePosNonzeroError::from_creation)
+        let x: i64 = s.parse().unwrap(); // this will just unwrap the number
+        PositiveNonzeroInteger::new(x).map_err(ParsePosNonzeroError::from_creation)
+        // its calling from_creation impl
     }
 }
 
@@ -65,6 +67,8 @@ mod test {
 
     #[test]
     fn test_parse_error() {
+        // we are asserting that PositiveNonzeroInteger 
+        // is throwing ParsePosNonzeroError
         assert!(matches!(
             PositiveNonzeroInteger::parse("not a number"),
             Err(ParsePosNonzeroError::ParseInt(_)),

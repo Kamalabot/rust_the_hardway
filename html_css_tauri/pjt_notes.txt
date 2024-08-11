@@ -1,0 +1,17 @@
+- created ui folder
+  - created index.html
+
+- installed tauri-cli
+  - run cargo tauri init to setup the pjt at same level as ui folder 
+  - for dev_server url and web assets provide the ../ui folder path.
+  - frontend serving + building leave it blank
+
+- run cargo tauri dev at ui folder level, to start the project. This will launch the index.html content 
+in the front end
+
+- adding withGlobalTauri: true to tauri.conf.json will inject the tauri api to the frontend, so javascript 
+can call them
+
+- The project completes by modifying the main.rs invoke commands.
+
+

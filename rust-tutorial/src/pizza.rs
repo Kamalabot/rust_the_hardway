@@ -6,7 +6,7 @@
 // Parent modules can't access private items in child modules
 // but children can always access parent items
 
-mod pizza_order {
+mod pizza {
 
     // To access the struct and the part to make public must both use pub
     pub struct Pizza {
@@ -54,5 +54,5 @@ mod pizza_order {
 
 // This is the public function that allows our other file access
 pub fn order_food() {
-    crate::restaurant::pizza_order::help_customer::take_order();
+    crate::pizza::help_customer::take_order();
 }

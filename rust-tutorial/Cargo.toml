@@ -1,0 +1,11 @@
+[package]
+name = "rust-tutorial"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rand = "0.8.5"
+
+[[bin]]
+name = "rust-tutorial"
+path = "src/main.rs"

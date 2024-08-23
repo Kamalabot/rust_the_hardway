@@ -87,11 +87,11 @@ use std::cmp::Ordering;
 // {} : Surrounds the code in the function
 
 // Declare that we want to use the restaurant module here
-mod restaurant;
+// mod pizza;
 
 // Declare a specific function we'll use to access the
 // pizza_order module
-use crate::restaurant::order_food;
+// use crate::pizza::order_food;
 
 // ----- FUNCTIONS -----
 // You can define functions before or after main
@@ -207,7 +207,8 @@ fn main() {
     // They differ from immutable variables in that their value
     // can't be defined at runtime (based on a function call for example)
     const ONE_MIL: u32 = 1_000_000;
-    const PI: f32 = 3.141592;
+    use std::f32::consts::PI;
+    // const PI: f32 = 3.141592;
 
     // You can define variables with the same name but with different
     // data types (Shadowing)
@@ -291,6 +292,7 @@ fn main() {
     } else {
         false
     };
+
     println!("Can Vote : {}", can_vote);
 
     // ----- MATCH -----
@@ -592,7 +594,7 @@ fn main() {
 
     // If you want 2 copies use clone
     let str1 = String::from("World");
-    let _str2 = str1.clone();
+    let str2 = str1.clone();
     println!("Hello {}", str1);
 
     // The above doesn't apply with data types :
@@ -751,7 +753,7 @@ fn main() {
 
     // Call for the public function that will allow us access to
     // the module
-    order_food();
+    // order_food();
 
     // ----- READING & WRITING TO FILES & ERROR HANDLING -----
     // Rust doesn't have exceptions like other languages. It handles

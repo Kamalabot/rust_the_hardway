@@ -973,7 +973,6 @@ fn main() {
     // 2. Threads are blocked from executing because of confusion
     // over requirements to proceed with execution
 
-    use std::thread;
     use std::time::Duration;
 
     // // Create a thread with spawn

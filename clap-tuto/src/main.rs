@@ -1,5 +1,6 @@
 #[allow(dead_code)]
 
+use std::path::PathBuf;
 use clap::{Parser, Subcommand};
 
 // remember to use cargo add --features=derive
@@ -11,10 +12,11 @@ use clap::{Parser, Subcommand};
 #[command(version="1.0")]
 #[command(about="Intro CLI app", long_about=None)]
 struct Cli {
-    #[command(Subcommand)]
+    #[command(subcommand)]
     command: Commands,
 }
 
+#[derive(Subcommand)]
 enum Commands{
     /// Add Two Numbers
     Add {
@@ -45,15 +47,32 @@ enum Commands{
         b: i32
     },
     /// Display the configs
-    Config {
+    Donfig {
         /// set config level as verbose or quiet
-        #[Arg(short, long, default_value_t= String::from("verbose"))]
+        #[arg(short, long, default_value_t= String::from("verbose"))]
         level: String,
     }
 
 }
 
 fn main() {
-    println!("Hello, world!");
+    let cli = Cli::parse();
 
+    match &cli.command {
+        Commands::Add { a, b } => {
+            println!("The result of adding {} and {} is {}", a, b, a + b);
+        },
+        Commands::Subtract{ a, b } => {
+            println!("The result of subtract {} and {} is {}", a, b, a - b);
+        },
+        Commands::Multiply{ a, b } => {
+            println!("The result of multiplying {} and {} is {}", a, b, a * b);
+        },
+        Commands::Divide{ a, b } => {
+            println!("The result of dividing {} and {} is {}", a, b, a / b);
+        },
+        Commands::Donfig { level } => {
+            println!("Config level set to {}", level)
+        }
+    } 
 }

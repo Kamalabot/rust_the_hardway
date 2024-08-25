@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use candle_core::{Tensor, DType, Device, IndexOp};
+use candle_core::{Tensor, DType, Device};
 use anyhow::Result;
 
 fn main() -> Result<()> {
@@ -19,6 +19,12 @@ fn main() -> Result<()> {
     // println!("Lets see how t3 indexed tensor looks: {:?}", t3);
 
     candle_core::safetensors::save(&HashMap::from([("A", t1)]), "models.safetensors")?;
+
+    // following from https://github.com/ToluClassics/candle-tutorial
+    
+    let rand_tensor = Tensor::randn(5.2, 1.0, (10, ), dev)?;
+
+    println!("Printing random Tensor: {:?}", rand_tensor.to_vec1::<f64>()?);
 
     Ok(())
 }

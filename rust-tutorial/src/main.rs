@@ -896,6 +896,10 @@ fn main() {
 
     // A Box is normally used when you have a large amount of data stored
     // on the heap and then you pass pointers to it on the stack.
+    // 
+    // When Box is used for error handling it is used for storing the 
+    // trait objects in the heap, as the size is not known ahead of time
+    // Box takes ownership of the error, so the error can be passed arround 
 
     // Create a Box with value 10
     let b_int1 = Box::new(10);
@@ -968,6 +972,27 @@ fn main() {
     // code executes at the same time. A thread handles scheduling
     // and execution of these blocks of code.
 
+    // Concurrency is when multiple tasks are making progress simultaneously,
+    // while parallelism is when tasks are literally running at the same time
+    // on multiple cores. Rust’s threading model can be used for both.
+    //
+    // Thread Safety:
+    
+    // Rust ensures that data shared across threads is accessed safely.
+    // This is achieved using ownership, borrowing, and lifetimes. 
+    // Types like Arc<T> and Mutex<T> help manage shared data safely between threads.
+    //
+    // Ownership and Borrowing:
+    
+    // Rust’s ownership system prevents data races at compile time, ensuring 
+    // that only one thread can write to a piece of data, or multiple threads
+    // can read it, but not both simultaneously.
+    //
+    // Thread API:
+    
+    // Rust provides a simple API for creating and managing threads. 
+    // The std::thread module contains functions and types for working with threads. 
+
     // Common problems with parallel programming involve :
     // 1. Thread are accessing data in the wrong order
     // 2. Threads are blocked from executing because of confusion
@@ -1012,6 +1037,18 @@ fn main() {
     // We call join here so that the main thread executes with thread1
     // unwrap handles the option Result which is Ok or Err
     thread1.join().unwrap();
+    // Data Races:
+
+    // Rust's ownership and type system prevent data races at compile time. This is a significant advantage over languages like C/C++, where data races are a common source of bugs.
+    // Memory Safety:
+
+    // Rust guarantees memory safety in multithreaded contexts without needing a garbage collector. This is achieved by strict enforcement of ownership, borrowing, and lifetimes.
+    // Concurrency Control:
+
+    // Rust provides safe abstractions (Mutex, RwLock, Atomic, etc.) to manage concurrency, ensuring that shared data is accessed correctly.
+    // Efficient Parallelism:
+
+    // Rust's lightweight threads (using OS threads) allow efficient parallel execution on multi-core processors, making it ideal for performance-critical applications. 
 
     // ----- BANK ACCOUNT EXAMPLE -----
     // We will create a bank account that multiple customers will try

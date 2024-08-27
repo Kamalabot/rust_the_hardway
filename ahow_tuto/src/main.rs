@@ -1,6 +1,6 @@
 #[allow(dead_code)]
 
-use anyhow::Result;
+use anyhow::Result;  // there is no detail on the objects
 // use std::error::Error
 
 fn divide(a: i32, b: i32) -> Result<i32> {
@@ -30,6 +30,10 @@ fn main() -> Result<()>{
     
     let val2 = divide(10, 0)?;
     println!("the result of second divide call: {}", val2);
+
+    let val3 = divide_raw(10, 8).unwrap();
+
+    println!("THis is val3 {}", val3);
  
     Ok(()) 
 

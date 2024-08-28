@@ -5,7 +5,7 @@
 // Above was used before 2018, currently we have to 
 // add csv to the current crate and then use it.
 
-use csv::Reader; //, Result};
+use csv::{Reader, ReaderBuilder}; //, Result};
 // use serde::{Serialize, Deserializer}
 use std::{error::Error, io, process};
 use serde::{Deserialize, Serialize};
@@ -39,6 +39,8 @@ fn example_serde(give_path: String) -> Result<(), Box<dyn Error>> {
         // automating deserialization
         let rec: Record = res?;
         println!("Deserialize value: {:?}", rec);
+        // printing one record and breaking
+        // break
     }
     Ok(())
 }
@@ -71,14 +73,22 @@ fn main() -> Result<(), Box<dyn Error>>{
             Ok(rc) => println!("Here we have rec {} and it is {:?}", idx, rc),
             Err(e) => println!("Some failure {:?}", e)
         }
+        if idx > 5{
+            break
+        }
     }
+    // ** Serializing the rows when there are no headers
+    // if let Err(e) = example_noheader("./data/smallpop-no-headers.csv".to_owned()) {
+    //     println!("Error in processing w/o header csv file:{}", e)
+    // }
      
+    // ** Serializing the csv rows into structs
+    // if let Err(e) = example_serde("./data/smallpop.csv".to_owned()) {
+    //     println!("The path must be not found: {}", e);
+    //     // process::exit(1);
+    // }
 
-    if let Err(e) = example_serde("./data/smallpop.csv".to_owned()) {
-        println!("The path must be not found: {}", e);
-        // process::exit(1);
-    }
-    
+    // ** Base example where the csv file is sent in through stdin 
     // if the value returned by the example fn 
     // is error then block will execute
     // if let Err(err) = example() {
@@ -86,7 +96,24 @@ fn main() -> Result<(), Box<dyn Error>>{
     //     // inform there is error, and then bailout
     //     // process::exit(1);
     // }
-
+    let mut singlerec = Reader::from_path("./data/smallpop-no-headers.csv")?;
+    if let Some(rec) = singlerec.records().next() {
+        println!("The record is: {:?}", rec?);
+    };
+    
+    // building the reader for csv files w/o header
+    let mut rdr = ReaderBuilder::new()
+        .has_headers(false)
+        .from_path("./data/smallpop-no-headers.csv");
+    let mut records = rdr?; // extracting the record
+    
+    // printing records by deserialization, when no headers are given
+    for rec in records.deserialize() {
+        let one_rec: Record = rec?;
+        println!("Record from csv with no headers: {:?}", one_rec);
+    }
+    
+    
     Ok(())
 
 }

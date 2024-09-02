@@ -244,4 +244,10 @@ fn file_double_final<P: AsRef<Path>>(file_path: P) -> Result<i32, Box<Error>> {
     Ok(2 * n)
 }
 
-
+macro_rules! fatal {
+    ($($tt:tt)*) => {{
+        use std::io::Write;
+        writeln!(&mut ::std::io::stderr(), $($tt)*).unwrap();
+        ::std::process::exit(1)
+    }}
+}

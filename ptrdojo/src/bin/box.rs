@@ -1,6 +1,8 @@
 // Explanation:
-// Box<T> is a smart pointer that provides ownership of a value allocated on the heap.
-// It is used when you need a single owner of data and the size of the data is not known
+// Box<T> is a smart pointer that provides 
+// ownership of a value allocated on the heap.
+// It is used when you need a single owner
+// of data and the size of the data is not known
 // at compile time or is too large to be stored on the stack.
 // Ownership: Box<T> provides unique ownership of the data it points to.
 // When the Box goes out of scope, it automatically deallocates the heap memory.

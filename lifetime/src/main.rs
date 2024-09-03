@@ -3,6 +3,10 @@
 use std::fs::File;
 use anyhow::Result;
 
+mod bounds;
+
+use bounds::{largest, large_with_display};
+
 fn longest<'a>(x: &'a str, y: &'a str) -> &'a str{
     // 'a is lifetime marker
     if x.len() > y.len() {
@@ -73,6 +77,13 @@ fn main() -> Result<(),>{
     let content = reader.process()?;
 
     println!("File Content: {}", content);
+
+    let nums = vec![1, 2, 3, 5, 6];
+
+    println!("The largest is: {}", largest(&nums));
+
+    large_with_display("hellowa", "tner", "not makin' sense");
+
     Ok(())
 }
 

@@ -1,6 +1,13 @@
 // Explanation:
-// Cow<T> stands for "Clone on Write" and is an enum that represents either a reference to immutable data or an owned copy of the data. It is used to optimize situations where you want to avoid cloning data until absolutely necessary.
-// Cow can be used with types like str and Vec, and it provides a way to handle immutable and mutable states efficiently.
+// Cow<T> stands for "Clone on Write" and is an
+// enum that represents either a reference to
+// immutable data or an owned copy of the data.
+// It is used to optimize situations where you
+// want to avoid cloning data until absolutely
+// necessary.
+// Cow can be used with types like str and
+// Vec, and it provides a way to handle immutable
+// and mutable states efficiently.
 // Challenges Solved:
 // Efficient Cloning: Avoids unnecessary cloning by using a reference as long as possible and only cloning when the data needs to be modified.
 // Performance: Helps in cases where you might be working with data that is frequently read but occasionally modified

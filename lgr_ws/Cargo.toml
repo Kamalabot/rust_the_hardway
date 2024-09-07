@@ -1,7 +1,7 @@
 [workspace]
 
-members = [ "ai_practice", "closures", "collections", "csv_read", "enumin", "generico", "grpc_explore",
-    "guesser", "handlin_error",
+members = [ "ai_practice", "closures", "collections", "csv_read", "deriver", "enumin", "generico", "grpc_explore",
+    "guesser", "handlin_error", "hello_macro_derive",
     "listerator", "ooping", "owningrs", "pkg", "restaurant", "rocket-chat", "serde_use", "structs", "testit", "toki-verse", "traito", "web_reqs",
 ]
 resolver = "2"

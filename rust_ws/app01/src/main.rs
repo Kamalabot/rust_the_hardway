@@ -6,3 +6,7 @@ fn main() {
     let ids = Uuid::new_v4();
     println!("Getting UUID: {}", ids.to_string());
 }
+
+fn news() -> String {
+    format!("{}", 87)
+}

@@ -1,10 +1,9 @@
 #[allow(dead_code)]
-
 use std::thread;
 use std::time::Duration;
 
 struct Cacher<T>
-where 
+where
     T: Fn(i32) -> i32,
 {
     calculation: T,
@@ -12,35 +11,35 @@ where
 }
 
 impl<T> Cacher<T>
-where 
+where
     T: Fn(i32) -> i32,
-    {
-        fn new(calculation: T) -> Cacher<T> {
-            Cacher {
-                calculation,
-                value: None
-            }
+{
+    fn new(calculation: T) -> Cacher<T> {
+        Cacher {
+            calculation,
+            value: None,
         }
-        fn value(&mut self, arg: i32) -> i32 {
-            match self.value {
-                Some(v) => v,
-                None => {
-                    let v = (self.calculation)(arg);
-                    self.value = Some(v);
-                    v
-                }
+    }
+    fn value(&mut self, arg: i32) -> i32 {
+        match self.value {
+            Some(v) => v,
+            None => {
+                let v = (self.calculation)(arg);
+                self.value = Some(v);
+                v
             }
         }
     }
+}
 
 fn simulated_exp_calc(inte: i32) -> i32 {
-    // function is simply 
+    // function is simply
     println!("Calculating slowly...");
     thread::sleep(Duration::from_secs(2));
     inte // returns the inte back
 }
 
-fn gen_workout(inte: i32, ran_num: i32){
+fn gen_workout(inte: i32, ran_num: i32) {
     // let exp_closure = |num| -> i32 {
     let mut exp_closure = Cacher::new(|num| {
         // closure implements Fn
@@ -53,7 +52,7 @@ fn gen_workout(inte: i32, ran_num: i32){
         // println!("Do {} situps", simulated_exp_calc(inte));
         // println!("Do {} pushups", exp_closure(inte));
         println!("Do {} pushups", exp_closure.value(inte)); // when using Cacher Closure
-        // println!("Do {} situps", exp_closure(inte));
+                                                            // println!("Do {} situps", exp_closure(inte));
         println!("Do {} situps", exp_closure.value(inte)); // when using Cacher Closure
     } else {
         if ran_num == 3 {
@@ -67,12 +66,14 @@ fn gen_workout(inte: i32, ran_num: i32){
         }
     }
 }
+
 fn main() {
     let sim_int = 7;
     let rn_num = 10;
     gen_workout(sim_int, rn_num);
 
     let x = 4;
+    // very simple closure
     let eql_to_x = |z: i32| z == x;
     let y = 3;
     assert!(eql_to_x(y));

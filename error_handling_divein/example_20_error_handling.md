@@ -55,6 +55,14 @@ impl fmt::Display for InvalidInputError {
 }
 
 impl Error for InvalidInputError {}
+// above line enables the source(), which is 
+// already implemented, so you wont require to wrte  
+// this supports error chaining
+fn source(&self) -> Option<&(dyn Error + 'static)> {
+        // In this case, there is no underlying error, so we return None
+        None
+    }
+}
 
 pub fn validate_number(input: &str) -> Result<i32, InvalidInputError> {
     match input.parse::<i32>() {
@@ -84,6 +92,9 @@ pub fn find_word(input: &str, word: &str) -> Option<usize> {
 }
 
 // Error handling with external libraries (reqwest example)
+// Below cfg(feature="reqwest") tell to compiler it an optional dep
+// reqwest = { version = "0.11", optional = true }: This makes the reqwest crate an optional dependency.
+// The [features] section defines a feature named reqwest that enables the reqwest dependency.
 #[cfg(feature = "reqwest")]
 pub async fn fetch_url(url: &str) -> Result<String, reqwest::Error> {
     let body = reqwest::get(url).await?.text().await?;
@@ -99,10 +110,17 @@ pub fn parse_json(input: &str) -> Result<serde_json::Value, serde_json::Error> {
 // Using Result with Option to avoid nested Result<Option<T>>
 pub fn parse_number_and_check(input: &str) -> Result<Option<i32>, ParseIntError> {
     match input.parse::<i32>() {
-        Ok(n) => Ok(Some(n)),
+        Ok(n) => Ok(Some(n)), // why do this? where will it be used
         Err(e) => Err(e),
     }
 }
+// Where it could be used:
+//This pattern is useful in cases where you
+// might want to:
+// Distinguish between three possible states:
+// Successful parsing (Ok(Some(n)))
+// Empty/optional input (which could return Ok(None) if implemented)
+// Failed parsing (Err(e))
 
 // Wrapping errors for more context
 pub fn open_file_with_context(file_path: &str) -> Result<String, io::Error> {
@@ -133,12 +151,6 @@ pub fn maybe_parse_number(input: &str) -> Option<Result<i32, ParseIntError>> {
 }
 
 // Handling errors with an iterator that returns Option
-pub fn find_first_invalid_number(inputs: Vec<&str>) -> Option<Result<i32, ParseIntError>> {
-    inputs.into_iter().find_map(|input| match input.parse::<i32>() {
-        Ok(_) => None,
-        Err(e) => Some(Err(e)),
-    })
-}
 
 // Returning custom error types from functions
 pub fn parse_and_validate(input: &str) -> Result<i32, InvalidInputError> {
@@ -175,6 +187,120 @@ pub enum MyError {
     ParseInt(#[from] ParseIntError),
 }
 ```
+
+The `MyError` enum is designed to combine different types of errors (`io::Error` and `std::num::ParseIntError`) with custom error messages using the `thiserror` crate. This allows you to propagate and handle different types of errors in a unified way while adding custom error messages.
+
+Let’s provide an example where you encounter and handle all three error types (`InvalidInput`, `Io`, and `ParseIntError`). This example will showcase how these errors can be raised and caught using the `MyError` type.
+
+### Example Code Using `MyError`:
+
+```rust
+use std::fs::File;
+use std::io::{self, Read};
+use std::num::ParseIntError;
+use thiserror::Error;  // Make sure to include thiserror in your dependencies.
+
+#[derive(Error, Debug)]
+pub enum MyError {
+    #[error("Invalid input: {0}")]
+    InvalidInput(String),
+    #[error(transparent)]
+    Io(#[from] io::Error),
+    #[error(transparent)]
+    ParseInt(#[from] ParseIntError),
+}
+
+// Function to simulate an invalid input error
+fn check_input(input: &str) -> Result<(), MyError> {
+    if input.is_empty() {
+        Err(MyError::InvalidInput("Input cannot be empty".to_string()))
+    } else {
+        Ok(())
+    }
+}
+
+// Function to open and read a file
+fn read_file(file_path: &str) -> Result<String, MyError> {
+    let mut file = File::open(file_path)?;
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;
+    Ok(contents)
+}
+
+// Function to parse a string to an integer
+fn parse_number(input: &str) -> Result<i32, MyError> {
+    let num: i32 = input.parse()?;
+    Ok(num)
+}
+
+fn main() -> Result<(), MyError> {
+    // Example 1: Invalid input
+    match check_input("") {
+        Ok(_) => println!("Input is valid."),
+        Err(e) => eprintln!("Error: {}", e), // Expecting InvalidInput error here
+    }
+
+    // Example 2: IO error (file not found)
+    match read_file("non_existent_file.txt") {
+        Ok(contents) => println!("File contents: {}", contents),
+        Err(e) => eprintln!("Error: {}", e), // Expecting Io error here
+    }
+
+    // Example 3: Parsing error (invalid integer)
+    match parse_number("abc") {
+        Ok(num) => println!("Parsed number: {}", num),
+        Err(e) => eprintln!("Error: {}", e), // Expecting ParseInt error here
+    }
+
+    Ok(())
+}
+```
+
+### Explanation:
+
+1. **`MyError` Enum:**
+   
+   - Combines three error types: `InvalidInput`, `Io` (from `std::io`), and `ParseIntError` (from parsing strings into integers).
+   - The `thiserror::Error` derive macro automatically implements the `Display` and `Error` traits for the `MyError` enum.
+
+2. **Error Variants:**
+   
+   - **`InvalidInput(String)`**: A custom error for invalid input, in this case, when an empty string is provided.
+   - **`Io(#[from] io::Error)`**: Automatically converts `io::Error` to `MyError` when it occurs (e.g., when trying to open a non-existent file).
+   - **`ParseInt(#[from] ParseIntError)`**: Automatically converts `ParseIntError` into `MyError` when parsing a string to an integer fails.
+
+3. **`check_input` Function**:
+   
+   - This function simulates an "invalid input" error by returning `MyError::InvalidInput` if the input is an empty string.
+
+4. **`read_file` Function**:
+   
+   - This function opens a file and reads its contents, potentially causing an `io::Error` if the file doesn’t exist or if there’s a reading issue.
+
+5. **`parse_number` Function**:
+   
+   - This function attempts to parse a string into an integer, which may result in a `ParseIntError`.
+
+6. **Main Program:**
+   
+   - The `main` function demonstrates how each of the three error types is handled.
+   - Each error variant is raised in different scenarios:
+     - **`InvalidInput`** when an empty string is provided.
+     - **`Io`** when trying to open a non-existent file.
+     - **`ParseIntError`** when attempting to parse an invalid integer string.
+
+### Output Example:
+
+```plaintext
+Error: Invalid input: Input cannot be empty
+Error: Failed to open non_existent_file.txt: No such file or directory (os error 2)
+Error: invalid digit found in string
+```
+
+### Usage Notes:
+
+- **Automatic Conversion with `#[from]`**: The `#[from]` attribute allows Rust to automatically convert errors from the underlying types (`io::Error` and `ParseIntError`) into your custom `MyError` type.
+- **Unified Error Handling**: Using a unified error type like `MyError` makes it easier to handle different error cases in a consistent way, and provides meaningful error messages with additional context when needed.
 
 ### `tests.rs`
 

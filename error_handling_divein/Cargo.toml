@@ -1,13 +1,13 @@
 [workspace]
 members = [ "error_advs",
   "error_basics"
-]
+, "error_divein"]
 
 resolver = "2"
 
 [workspace.package]
 version = "0.6.5"
-edition = "2022"
+edition = "2021"
 description = "Error Handling Warmup"
 repository = "https://github.com/kamalabot/rust_the_hardway"
 
@@ -16,6 +16,8 @@ repository = "https://github.com/kamalabot/rust_the_hardway"
 [workspace.dependencies]
 anyhow = "1.0.86"
 serde_json = "1.0.127"
+# reqwest = { version = "0.12.7", optional = true }
+reqwest = { version = "0.12.7" }
 
 [profile.release-with-debug]
 inherits = "release"

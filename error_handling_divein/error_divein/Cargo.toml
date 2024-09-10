@@ -1,0 +1,11 @@
+[package]
+name = "error_divein"
+version.workspace = true
+edition.workspace = true
+description.workspace = true
+repository.workspace = true
+
+[dependencies]
+reqwest = {workspace = true, optional = true }
+serde_json = {workspace = true, optional = true}
+thiserror = "1.0.63"

@@ -61,7 +61,9 @@ mod tests {
 pub fn double_elements(vec: Vec<i32>) -> Vec<i32> {
     vec.into_iter().map(|x| x * 2).collect()
 }
-
+// into_iter() takes ownership and operates
+// iter() barrows the vector and operates 
+// just on the value
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -223,6 +225,8 @@ pub fn sort_names(mut names: Vec<&str>) -> Vec<&str> {
     names
 }
 
+// Vec<T> where T implements the Ord trait. Since &str (string slices) implement Ord
+// Cannot directly push into println!(). Need to first sort and then push
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -3,6 +3,7 @@ use std::thread;
 use std::time::Duration;
 
 pub fn basic() {
+    // we are spawning
     let handle = thread::spawn(|| {
         for idx in 1..5 {
             println!("Basic thread: {}", idx);

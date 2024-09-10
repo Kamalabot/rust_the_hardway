@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-assert_approx_eq = "1.1.0"
-console = "0.15.8"
-dotenvy = "0.15.7"
-reqwest = { version = "0.12.5", features = ["blocking"] }
-serde = { version = "1.0.204", features = ["derive"] }
-serde_json = "1.0.120"
+# assert_approx_eq = "1.1.0"
+# console = "0.15.8"
+# dotenvy = "0.15.7"
+# reqwest = { version = "0.12.5", features = ["blocking", "native-tls-vendored"] }
+# serde = { version = "1.0.204", features = ["derive"] }
+# serde_json = "1.0.120"

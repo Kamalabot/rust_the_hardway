@@ -617,278 +617,283 @@ fn main() {
 - Rust's ownership model and safety guarantees make it easier to write safe, concurrent programs.
 - Real-world applications of threading include web servers, data processing, real-time applications, web scraping, and background task processing.
 - Proper use of threading can significantly improve the efficiency, responsiveness, and performance of applications.
-  
-  
+
   Testing multi-threaded applications can be challenging due to the non-deterministic nature of concurrent execution. However, there are strategies and techniques for writing reliable tests for threaded code. Below are several examples that illustrate different ways to test threaded code in Rust:
-  
-  ### 1. **Basic Thread Execution Testing**
-  
+
+### 1. **Basic Thread Execution Testing**
+
   A simple test to ensure that threads are created and run correctly.
-  
+
   **Example:**
-  
-  ```rust
-  #[cfg(test)]
-  mod tests {
-      use std::thread;
-      use std::time::Duration;
-  
-      #[test]
-      fn test_thread_execution() {
-          let handle = thread::spawn(|| {
-              for i in 1..5 {
-                  println!("Thread is running: {}", i);
-                  thread::sleep(Duration::from_millis(100));
-              }
-          });
-  
-          assert!(handle.join().is_ok()); // Ensure the thread executed without panic
-      }
-  }
-  ```
-  
+
+```rust
+#[cfg(test)]
+mod tests {
+    use std::thread;
+    use std::time::Duration;
+
+    #[test]
+    fn test_thread_execution() {
+        let handle = thread::spawn(|| {
+            for i in 1..5 {
+                println!("Thread is running: {}", i);
+                thread::sleep(Duration::from_millis(100));
+            }
+        });
+
+        assert!(handle.join().is_ok()); // Ensure the thread executed without panic
+    }
+}
+```
+
   **Explanation**: This test spawns a thread that prints messages. The test checks if the thread completes without any errors using `join()`, which waits for the thread to finish.
-  
-  ### 2. **Testing Thread Synchronization with `Mutex`**
-  
+
+### 2. **Testing Thread Synchronization with `Mutex`**
+
   Testing for thread synchronization issues (e.g., race conditions) using `Mutex` to safely share data between threads.
-  
+
   **Example:**
-  
-  ```rust
-  #[cfg(test)]
-  mod tests {
-      use std::sync::{Arc, Mutex};
-      use std::thread;
-  
-      #[test]
-      fn test_thread_synchronization() {
-          let counter = Arc::new(Mutex::new(0));
-          let mut handles = vec![];
-  
-          for _ in 0..10 {
-              let counter = Arc::clone(&counter);
-              let handle = thread::spawn(move || {
-                  let mut num = counter.lock().unwrap();
-                  *num += 1;
-              });
-              handles.push(handle);
-          }
-  
-          for handle in handles {
-              handle.join().unwrap();
-          }
-  
-          assert_eq!(*counter.lock().unwrap(), 10); // Check if counter reached 10
-      }
-  }
-  ```
-  
+
+```rust
+#[cfg(test)]
+mod tests {
+    use std::sync::{Arc, Mutex};
+    use std::thread;
+
+    #[test]
+    fn test_thread_synchronization() {
+        let counter = Arc::new(Mutex::new(0));
+        let mut handles = vec![];
+
+        for _ in 0..10 {
+            let counter = Arc::clone(&counter);
+            let handle = thread::spawn(move || {
+                let mut num = counter.lock().unwrap();
+                *num += 1;
+            });
+            handles.push(handle);
+        }
+
+        for handle in handles {
+            handle.join().unwrap();
+        }
+
+        assert_eq!(*counter.lock().unwrap(), 10); // Check if counter reached 10
+    }
+}
+```
+
   **Explanation**: This test creates multiple threads that increment a shared counter. The `Arc` and `Mutex` are used to safely share and mutate the counter across threads. The test verifies that all threads increment the counter correctly.
-  
-  ### 3. **Testing with `mpsc::channel` for Inter-Thread Communication**
-  
+
+### 3. **Testing with `mpsc::channel` for Inter-Thread Communication**
+
   Testing inter-thread communication using Rust's `mpsc` (multiple producer, single consumer) channel.
-  
+
   **Example:**
-  
-  ```rust
-  #[cfg(test)]
-  mod tests {
-      use std::sync::mpsc;
-      use std::thread;
-      use std::time::Duration;
-  
-      #[test]
-      fn test_thread_communication() {
-          let (tx, rx) = mpsc::channel();
-          let handle = thread::spawn(move || {
-              for i in 1..5 {
-                  tx.send(i).unwrap();
-                  thread::sleep(Duration::from_millis(100));
-              }
-          });
-  
-          let mut received_values = vec![];
-          for received in rx {
-              received_values.push(received);
-          }
-  
-          handle.join().unwrap();
-          assert_eq!(received_values, vec![1, 2, 3, 4]); // Verify that all values were received
-      }
-  }
-  ```
-  
+
+```rust
+#[cfg(test)]
+mod tests {
+    use std::sync::mpsc;
+    use std::thread;
+    use std::time::Duration;
+
+    #[test]
+    fn test_thread_communication() {
+        let (tx, rx) = mpsc::channel();
+        let handle = thread::spawn(move || {
+            for i in 1..5 {
+                tx.send(i).unwrap();
+                thread::sleep(Duration::from_millis(100));
+            }
+        });
+
+        let mut received_values = vec![];
+        for received in rx {
+            received_values.push(received);
+        }
+
+        handle.join().unwrap();
+        assert_eq!(received_values, vec![1, 2, 3, 4]); // Verify that all values were received
+    }
+}
+```
+
   **Explanation**: This test creates a thread that sends values to the main thread via a channel. The main thread collects and verifies the received values.
-  
-  ### 4. **Testing Deadlock Prevention**
-  
+
+### 4. **Testing Deadlock Prevention**
+
   Testing to ensure that code is free from deadlocks. Deadlocks occur when two or more threads are waiting indefinitely for each other to release resources.
-  
+
   **Example:**
-  
-  ```rust
-  #[cfg(test)]
-  mod tests {
-      use std::sync::{Arc, Mutex};
-      use std::thread;
-  
-      #[test]
-      fn test_no_deadlock() {
-          let resource1 = Arc::new(Mutex::new(0));
-          let resource2 = Arc::new(Mutex::new(0));
-  
-          let r1 = Arc::clone(&resource1);
-          let r2 = Arc::clone(&resource2);
-  
-          let handle1 = thread::spawn(move || {
-              let _lock1 = r1.lock().unwrap();
-              thread::sleep(std::time::Duration::from_millis(50));
-              let _lock2 = r2.lock().unwrap();
-          });
-  
-          let r1 = Arc::clone(&resource1);
-          let r2 = Arc::clone(&resource2);
-  
-          let handle2 = thread::spawn(move || {
-              let _lock2 = r2.lock().unwrap();
-              thread::sleep(std::time::Duration::from_millis(50));
-              let _lock1 = r1.lock().unwrap();
-          });
-  
-          handle1.join().unwrap();
-          handle2.join().unwrap();
-          assert!(true); // If we reach here, no deadlock occurred
-      }
-  }
-  ```
-  
+
+```rust
+#[cfg(test)]
+mod tests {
+    use std::sync::{Arc, Mutex};
+    use std::thread;
+
+    #[test]
+    fn test_no_deadlock() {
+        let resource1 = Arc::new(Mutex::new(0));
+        let resource2 = Arc::new(Mutex::new(0));
+
+        let r1 = Arc::clone(&resource1);
+        let r2 = Arc::clone(&resource2);
+
+        let handle1 = thread::spawn(move || {
+            let _lock1 = r1.lock().unwrap();
+            thread::sleep(std::time::Duration::from_millis(50));
+            let _lock2 = r2.lock().unwrap();
+        });
+
+        let r1 = Arc::clone(&resource1);
+        let r2 = Arc::clone(&resource2);
+
+        let handle2 = thread::spawn(move || {
+            let _lock2 = r2.lock().unwrap();
+            thread::sleep(std::time::Duration::from_millis(50));
+            let _lock1 = r1.lock().unwrap();
+        });
+
+        handle1.join().unwrap();
+        handle2.join().unwrap();
+        assert!(true); // If we reach here, no deadlock occurred
+    }
+}
+```
+
   **Explanation**: This test attempts to create a potential deadlock situation but uses timed delays to avoid it. The test passes if both threads complete without deadlocking.
-  
-  ### 5. **Testing Thread Pool Execution**
-  
+
+### 5. **Testing Thread Pool Execution**
+
   Testing a thread pool implementation to ensure tasks are executed correctly and concurrently.
-  
+
   **Example:**
-  
-  ```rust
-  #[cfg(test)]
-  mod tests {
-      use std::sync::{Arc, Mutex};
-      use std::thread;
-      use std::sync::mpsc;
-      use std::time::Duration;
-  
-      struct ThreadPool {
-          workers: Vec<thread::JoinHandle<()>>,
-          sender: mpsc::Sender<Box<dyn FnOnce() + Send>>,
-      }
-  
-      impl ThreadPool {
-          fn new(size: usize) -> ThreadPool {
-              let (sender, receiver) = mpsc::channel::<Box<dyn FnOnce() + Send>>();
-              let receiver = Arc::new(Mutex::new(receiver));
-              let mut workers = Vec::with_capacity(size);
-  
-              for _ in 0..size {
-                  let receiver = Arc::clone(&receiver);
-                  workers.push(thread::spawn(move || loop {
-                      let job = receiver.lock().unwrap().recv().unwrap();
-                      job();
-                  }));
-              }
-  
-              ThreadPool { workers, sender }
-          }
-  
-          fn execute<F>(&self, job: F)
-          where
-              F: FnOnce() + Send + 'static,
-          {
-              self.sender.send(Box::new(job)).unwrap();
-          }
-      }
-  
-      #[test]
-      fn test_thread_pool() {
-          let pool = ThreadPool::new(4);
-          let counter = Arc::new(Mutex::new(0));
-  
-          for _ in 0..8 {
-              let counter = Arc::clone(&counter);
-              pool.execute(move || {
-                  let mut num = counter.lock().unwrap();
-                  *num += 1;
-                  thread::sleep(Duration::from_millis(50));
-              });
-          }
-  
-          thread::sleep(Duration::from_secs(1)); // Allow time for all tasks to complete
-          assert_eq!(*counter.lock().unwrap(), 8); // Ensure all tasks were executed
-      }
-  }
-  ```
-  
+
+```rust
+#[cfg(test)]
+mod tests {
+    use std::sync::{Arc, Mutex};
+    use std::thread;
+    use std::sync::mpsc;
+    use std::time::Duration;
+
+    struct ThreadPool {
+        workers: Vec<thread::JoinHandle<()>>,
+        sender: mpsc::Sender<Box<dyn FnOnce() + Send>>,
+    }
+
+    impl ThreadPool {
+        fn new(size: usize) -> ThreadPool {
+            let (sender, receiver) = mpsc::channel::<Box<dyn FnOnce() + Send>>();
+            let receiver = Arc::new(Mutex::new(receiver));
+            let mut workers = Vec::with_capacity(size);
+
+            for _ in 0..size {
+                let receiver = Arc::clone(&receiver);
+                workers.push(thread::spawn(move || loop {
+                    let job = receiver.lock().unwrap().recv().unwrap();
+                    job();
+                }));
+            }
+
+            ThreadPool { workers, sender }
+        }
+
+        fn execute<F>(&self, job: F)
+        where
+            F: FnOnce() + Send + 'static,
+        {
+            self.sender.send(Box::new(job)).unwrap();
+        }
+    }
+
+    #[test]
+    fn test_thread_pool() {
+        let pool = ThreadPool::new(4);
+        let counter = Arc::new(Mutex::new(0));
+
+        for _ in 0..8 {
+            let counter = Arc::clone(&counter);
+            pool.execute(move || {
+                let mut num = counter.lock().unwrap();
+                *num += 1;
+                thread::sleep(Duration::from_millis(50));
+            });
+        }
+
+        thread::sleep(Duration::from_secs(1)); // Allow time for all tasks to complete
+        assert_eq!(*counter.lock().unwrap(), 8); // Ensure all tasks were executed
+    }
+}
+```
+
   **Explanation**: This test checks that a custom thread pool correctly schedules and executes tasks concurrently.
-  
-  ### 6. **Testing Thread Safety with `RwLock`**
-  
+
+### 6. **Testing Thread Safety with `RwLock`**
+
   Testing read-write locks to ensure safe access to shared data in a multi-threaded environment.
-  
+
   **Example:**
-  
-  ```rust
-  #[cfg(test)]
-  mod tests {
-      use std::sync::{Arc, RwLock};
-      use std::thread;
-  
-      #[test]
-      fn test_rwlock_safety() {
-          let data = Arc::new(RwLock::new(5));
-          let mut handles = vec![];
-  
-          // Multiple readers
-          for _ in 0..5 {
-              let data = Arc::clone(&data);
-              let handle = thread::spawn(move || {
-                  let read_data = data.read().unwrap();
-                  assert_eq!(*read_data, 5);
-              });
-              handles.push(handle);
-          }
-  
-          // One writer
-          let data = Arc::clone(&data);
-          let handle = thread::spawn(move || {
-              let mut write_data = data.write().unwrap();
-              *write_data += 1;
-          });
-          handles.push(handle);
-  
-          for handle in handles {
-              handle.join().unwrap();
-          }
-  
-          assert_eq!(*data.read().unwrap(), 6); // Ensure write succeeded
-      }
-  }
-  ```
-  
+
+```rust
+#[cfg(test)]
+mod tests {
+    use std::sync::{Arc, RwLock};
+    use std::thread;
+
+    #[test]
+    fn test_rwlock_safety() {
+        let data = Arc::new(RwLock::new(5));
+        let mut handles = vec![];
+
+        // Multiple readers
+        for _ in 0..5 {
+            let data = Arc::clone(&data);
+            let handle = thread::spawn(move || {
+                let read_data = data.read().unwrap();
+                assert_eq!(*read_data, 5);
+            });
+            handles.push(handle);
+        }
+
+        // One writer
+        let data = Arc::clone(&data);
+        let handle = thread::spawn(move || {
+            let mut write_data = data.write().unwrap();
+            *write_data += 1;
+        });
+        handles.push(handle);
+
+        for handle in handles {
+            handle.join().unwrap();
+        }
+
+        assert_eq!(*data.read().unwrap(), 6); // Ensure write succeeded
+    }
+}
+```
+
   **Explanation**: This test creates multiple readers and one writer using `RwLock` to ensure safe concurrent access to shared data.
-  
-  ### Summary
-  
+
+### Summary
+
   Testing threaded applications in Rust involves:
-  1. **Basic thread execution checks** to ensure threads are running correctly.
-  2. **Synchronization tests** using `Mutex`, `Arc`, and `RwLock` to avoid race conditions.
-  3. **Communication tests** using channels to verify inter-thread messaging.
-  4. **Deadlock prevention checks** to ensure threads do not block each other indefinitely.
-  5. **Thread pool execution tests** to verify task scheduling and concurrency.
-  6. **Thread safety tests** to ensure shared data access remains safe and consistent.
-  
-  These examples demonstrate different testing strategies for concurrent Rust applications. Each example includes a `#[test]` function to illustrate how to write and run tests for multi-threaded code effectively.
+
+1. **Basic thread execution checks** to ensure threads are running correctly.
+
+2. **Synchronization tests** using `Mutex`, `Arc`, and `RwLock` to avoid race conditions.
+
+3. **Communication tests** using channels to verify inter-thread messaging.
+
+4. **Deadlock prevention checks** to ensure threads do not block each other indefinitely.
+
+5. **Thread pool execution tests** to verify task scheduling and concurrency.
+
+6. **Thread safety tests** to ensure shared data access remains safe and consistent.
+   
+   These examples demonstrate different testing strategies for concurrent Rust applications. Each example includes a `#[test]` function to illustrate how to write and run tests for multi-threaded code effectively.
 
 ### 
 
@@ -906,10 +911,6 @@ fn main() {
 10. **Parallel Map:** Using multiple threads to process and transform data concurrently.
 
 You can run this code, and it will print the output for each example step by step. The combination of `lib.rs` and `main.rs` allows clean separation of the logic and execution.
-
-
-
-
 
 To provide a comprehensive set of examples on error handling in Rust, I will cover various real-world scenarios ranging from basic error handling to more advanced use cases involving custom error types, conversions, and integrating with popular Rust libraries.
 

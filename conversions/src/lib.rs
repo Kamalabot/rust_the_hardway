@@ -19,7 +19,8 @@ struct Celsius(f64);
 
 #[derive(Debug)]
 struct Farenheit(f64);
-
+// using the From trait to convert between
+// two custom structs
 impl From<Farenheit> for Celsius {
     fn from(f: Farenheit) -> Celsius {
         Celsius((f.0 - 32.0) * 5.0 / 9.0)
@@ -32,6 +33,7 @@ pub fn custom_from() {
     println!("Celsius {:?}", c);
 }
 // try_from is used for conversion
+// from string to type
 impl TryFrom<&str> for Celsius {
     type Error = ParseFloatError;
     // need to use ParseFloatError to work
@@ -102,9 +104,12 @@ impl fmt::Display for ParseCoordinateError {
 // Display fmt function is implemented
 
 impl From<ParseIntError> for ParseCoordinateError {
-    fn from(value: ParseIntError) -> Self {
+    fn from(_value: ParseIntError) -> Self {
+        // if there is error in parsing integer
+        // parseinterror comes up
         ParseCoordinateError
     }
+    // creates a custom error but how to use it
 }
 // From trait is implemented for ParseCoordinateError
 // to convert ParseIntError to ParseCoordinateError.
@@ -128,15 +133,20 @@ impl TryFrom<&str> for Coordinate {
         println!("vector parts are: {:?}", parts);
         if parts.len() != 2 {
             return Err(ParseCoordinateError);
+            // here we are returning the custom error
+            // under try_from
         }
         // let x: i32 = parts[0].parse()?;
         let x: i32 = parts[0].parse::<i32>()?;
         // let y: i32 = parts[1].parse()?;
         // the above threw an error
         let y: i32 = parts[0].parse::<i32>()?;
+        // if all is good, then send Ok
         Ok(Coordinate { x, y })
     }
 }
+// above shows the way a custom error class is
+// created and utilized
 
 pub fn custom_try_from_error() {
     match Coordinate::try_from("10, 20") {
@@ -165,7 +175,8 @@ struct Person {
     name: String,
     age: u32,
 }
-
+// another implementation of from_str
+// with string Error, instead of custom error
 impl FromStr for Person {
     type Err = &'static str;
     // static is longest lifetime possible

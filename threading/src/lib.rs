@@ -12,6 +12,8 @@ pub fn basic() {
         }
     });
     handle.join().unwrap();
+    // this thread is not linking with any
+    // other thread
 }
 
 pub fn basic_with_for() {
@@ -41,7 +43,7 @@ pub fn thread_sleep() {
 
 pub fn multi_threads() {
     let mut handles = vec![];
-
+    // threads are similarly created here
     for idx in 1..3 {
         let handle = thread::spawn(move || {
             println!("Thread {idx:?} working");
@@ -57,6 +59,7 @@ pub fn multi_threads() {
         // each handle object is joined
         handle.join().unwrap();
     }
+    // what will happen if the threads are not joined
 }
 
 pub fn thread_channels() {
@@ -96,17 +99,20 @@ pub fn multi_value_channel() {
 pub fn arc_mutex_example() {
     let counter = Arc::new(Mutex::new(0));
     let mut handles = vec![];
-
+    // Sharing and updating state between multiple threads using `Arc` and `Mutex`.
     for _ in 0..5 {
         let counter = Arc::clone(&counter);
+        // starts ownership sharing using clone
         let handle = thread::spawn(move || {
             let mut num = counter.lock().unwrap();
+            // Lock the Mutex before modifying the counter
             *num += 1;
         });
         handles.push(handle);
     }
     for h in handles {
         h.join().unwrap();
+        // By joining the threads, you ensure that the main thread waits for all spawned threads to finish their work:
     }
     println!("Final count: {}", *counter.lock().unwrap());
 }

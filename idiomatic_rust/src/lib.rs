@@ -92,9 +92,11 @@ pub fn idiomatic1() {
 
     let proc_out: Result<Vec<i32>, String> = out_res
         .into_iter()
-        .map(|x| x.parse::<i32>().map_err(|_| "Invalid input".to_string()))
+        // .map(|x| x.parse::<i32>().map_err(|_| "Invalid input".to_string()))
+        .map(|x| x.parse::<i32>().map_err(|_| ParseIntError))
         .collect();
     println!("Output Res: {:?}", proc_out);
+    // can the map_err take a ParseIntError
 }
 
 use std::collections::HashMap;
@@ -116,6 +118,7 @@ pub fn idioming_types() {
 use std::error::Error;
 use std::fs::File;
 use std::io::{self, Read};
+use std::num::ParseIntError;
 
 pub fn read_file_content(path: &str) -> Result<String, Box<dyn Error>> {
     let mut file = File::open(path)?;

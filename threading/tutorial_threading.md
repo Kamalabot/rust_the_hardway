@@ -614,10 +614,13 @@ fn main() {
 ### Key Takeaways
 
 - **Threading** is useful for problems involving concurrent or parallel processing.
-- Rust's ownership model and safety guarantees make it easier to write safe, concurrent programs.
-- Real-world applications of threading include web servers, data processing, real-time applications, web scraping, and background task processing.
-- Proper use of threading can significantly improve the efficiency, responsiveness, and performance of applications.
 
+- Rust's ownership model and safety guarantees make it easier to write safe, concurrent programs.
+
+- Real-world applications of threading include web servers, data processing, real-time applications, web scraping, and background task processing.
+
+- Proper use of threading can significantly improve the efficiency, responsiveness, and performance of applications.
+  
   Testing multi-threaded applications can be challenging due to the non-deterministic nature of concurrent execution. However, there are strategies and techniques for writing reliable tests for threaded code. Below are several examples that illustrate different ways to test threaded code in Rust:
 
 ### 1. **Basic Thread Execution Testing**
@@ -917,6 +920,74 @@ To provide a comprehensive set of examples on error handling in Rust, I will cov
 ### `lib.rs`
 
 Below is the content of `lib.rs`, which includes 20 examples of error handling in Rust. These examples cover common patterns such as handling errors with `Result`, using `Option`, creating custom errors, converting errors, and working with third-party libraries.
+
+When multiple threads are not joined in a Rust program, the main thread may finish execution before the spawned threads complete their work. This can lead to several issues:
+
+### Key Issues:
+
+1. **Threads may not finish their tasks**:
+   
+   - If the main thread ends before the spawned threads complete their execution, those threads will be prematurely terminated, and their work may remain incomplete.
+   - In Rust, when the main thread finishes, it terminates the entire process, killing all active threads that haven't been joined.
+
+2. **Loss of results**:
+   
+   - If the spawned threads are performing critical operations (e.g., updating shared data), and you don’t join them, you may lose the results of those operations. This can result in inconsistent or incomplete data.
+
+3. **Unpredictable behavior**:
+   
+   - Since threads may be interrupted at any time, the program's output becomes unpredictable if the main thread terminates early. You may see partial or no results from the background threads.
+
+### Example:
+
+```rust
+use std::thread;
+
+fn main() {
+    for i in 0..5 {
+        thread::spawn(move || {
+            println!("Thread {}", i);
+        });
+    }
+    // If we don't join the threads, the main thread may exit before they finish.
+    println!("Main thread is done!");
+}
+```
+
+### What can happen:
+
+- The main thread prints "Main thread is done!" and exits.
+- Some or all of the spawned threads may not have time to print their messages, leading to incomplete or missing output.
+
+### Correct Way (with Join):
+
+By joining the threads, you ensure that the main thread waits for all spawned threads to finish their work:
+
+```rust
+use std::thread;
+
+fn main() {
+    let mut handles = vec![];
+
+    for i in 0..5 {
+        let handle = thread::spawn(move || {
+            println!("Thread {}", i);
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap(); // Ensures the main thread waits for all spawned threads to finish
+    }
+
+    println!("Main thread is done!");
+}
+```
+
+### Summary:
+
+- **Without `join()`**: Threads may be prematurely terminated, leading to incomplete work and unpredictable behavior.
+- **With `join()`**: Ensures that all threads complete their execution before the main thread finishes.
 
 #### `lib.rs`
 

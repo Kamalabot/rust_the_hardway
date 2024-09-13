@@ -9,13 +9,17 @@ use std::thread;
 
 fn main() {
     let data = Arc::new(vec![1, 2, 3]);
+    let config = Arc::new(String::from("New string"));
 
     let mut handles = vec![];
 
     for _ in 0..3 {
         let data_clone = Arc::clone(&data);
+        let data_config = Arc::clone(&config);
+        // data_config can be cloned here for every
         let handle = thread::spawn(move || {
             println!("Thread data: {:?}", data_clone);
+            println!("Thread config: {:?}", data_config.split(" "));
         });
         handles.push(handle);
     }

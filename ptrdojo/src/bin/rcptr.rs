@@ -14,13 +14,16 @@
 use std::rc::Rc;
 
 fn main() {
-    let data = Rc::new(vec![1, 2, 3]);
+    let shared_data = Rc::new(vec![1, 2, 3]);
+    // Same data inside Rc is used in two
+    // different variables a and b
+    let a = Rc::clone(&shared_data); // `a` and `data` share ownership
+    let b = Rc::clone(&shared_data); // `b` and `data` share ownership
+                                     // doing a direct assignment to a different
+                                     // variable will move the data
+                                     // let c = data;
 
-    let a = Rc::clone(&data); // `a` and `data` share ownership
-    let b = Rc::clone(&data); // `b` and `data` share ownership
-    
-    println!("data: {:?}", data);
+    println!("data: {:?}", shared_data);
     println!("a: {:?}", a);
     println!("b: {:?}", b);
 }
-

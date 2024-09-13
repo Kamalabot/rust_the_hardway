@@ -94,3 +94,75 @@ Rust provides **low-level control** over concurrency without sacrificing perform
 ### Conclusion
 
 Rust's combination of **memory safety**, **thread safety without a GIL**, and its **highly efficient concurrency model** allows it to take full advantage of modern multi-core processors, providing significant performance improvements over Python in CPU-bound and multi-threaded tasks. By eliminating runtime overhead like garbage collection and dynamic typing, and ensuring compile-time guarantees, Rust enables highly optimized, parallel, and safe code execution.
+
+Not exactly. In Python, due to the **Global Interpreter Lock (GIL)**, threads do not execute bytecode truly in parallel in the standard implementation (CPython). This means that only one thread can execute Python bytecode at a time, even on a multi-core processor. Therefore, Python threads are better suited for I/O-bound tasks rather than CPU-bound tasks.
+
+However, despite this, **threads can still change the `results` list** because they operate concurrently. The `Lock` (like `threading.Lock`) ensures that only one thread at a time can access and modify the shared list, preventing data races.
+
+### Key Points:
+
+1. **Concurrency, Not True Parallelism**: Python threads run concurrently but not in true parallel due to the GIL in CPython. This means they may interleave their execution rather than run at the same time.
+
+2. **Thread-Safe Changes**: With the use of a `Lock`, threads can safely modify the shared `results` list. The `Lock` ensures that only one thread can modify the list at a time, maintaining data consistency.
+
+3. **Order of Execution**: Because threads run concurrently, the order of results in the list may vary. However, all the squares will be computed and added to the `results` list correctly.
+
+### Example to Illustrate:
+
+In the previous example using `threading`:
+
+```python
+import threading
+
+data = [1, 2, 3, 4, 5]
+result = []  # Shared data structure
+lock = threading.Lock()  # Mutex for thread-safe operations
+threads = []  # List to keep track of threads
+
+def compute_square(num):
+    squared = num * num
+    with lock:  # Lock the shared resource
+        result.append(squared)
+
+# Create and start a thread for each number in data
+for num in data:
+    thread = threading.Thread(target=compute_square, args=(num,))
+    threads.append(thread)
+    thread.start()
+
+# Wait for all threads to complete
+for thread in threads:
+    thread.join()
+
+print(result)  # Output should be [1, 4, 9, 16, 25] (order may vary)
+```
+
+```python
+from concurrent.futures import ThreadPoolExecutor
+
+data = [1, 2, 3, 4, 5]
+result = []
+
+def compute_square(num):
+    return num * num
+
+# Use ThreadPoolExecutor to manage threads
+with ThreadPoolExecutor(max_workers=5) as executor:
+    # Map the compute_square function to the data
+    futures = executor.map(compute_square, data)
+
+    # Collect results
+    result.extend(futures)
+
+print(result)  # Output: [1, 4, 9, 16, 25]
+
+```
+
+### Explanation:
+
+- Each thread acquires the `lock` before modifying the shared `result` list. This ensures that only one thread can write to `result` at a time, making the operation thread-safe.
+- Threads still run concurrently (e.g., one may compute while another waits), but they do not run in true parallel on multiple CPU cores.
+
+### Conclusion:
+
+Python threads can run concurrently and modify shared data safely using locks, but they are not truly parallel due to the GIL. For true parallelism with CPU-bound tasks, consider using Python's `multiprocessing` module, which bypasses the GIL by using separate processes.

@@ -77,7 +77,8 @@ pub fn thread_channels() {
 
 pub fn multi_value_channel() {
     let (tx, rx) = mpsc::channel();
-
+    // if the move is not used, then tx and rx
+    // may live for lesser time than thread below
     thread::spawn(move || {
         let vals = vec![
             String::from("Message1"),
@@ -101,12 +102,15 @@ pub fn arc_mutex_example() {
     let mut handles = vec![];
     // Sharing and updating state between multiple threads using `Arc` and `Mutex`.
     for _ in 0..5 {
+        // the above loop is in main thread
         let counter = Arc::clone(&counter);
         // starts ownership sharing using clone
         let handle = thread::spawn(move || {
+            // counter is moved into each thread
             let mut num = counter.lock().unwrap();
             // Lock the Mutex before modifying the counter
             *num += 1;
+            // value of the counter loc is updated
         });
         handles.push(handle);
     }
@@ -114,6 +118,7 @@ pub fn arc_mutex_example() {
         h.join().unwrap();
         // By joining the threads, you ensure that the main thread waits for all spawned threads to finish their work:
     }
+
     println!("Final count: {}", *counter.lock().unwrap());
 }
 
@@ -134,7 +139,6 @@ pub fn deadlock_example() {
     // Clone Arc references to be used in the second thread
     let m1 = Arc::clone(&mutex1);
     let m2 = Arc::clone(&mutex2);
-
     // Spawn the second thread
     let handle2 = thread::spawn(move || {
         // Thread 2 locks mutex2 first
@@ -155,11 +159,14 @@ pub fn parallel_map_example() {
     let data = vec![1, 2, 3, 4, 5];
     let mut handles = vec![];
     let result = Arc::new(Mutex::new(vec![]));
+    // here the empty vector is first created as mutex
 
     for num in data {
         let result = Arc::clone(&result);
+        // mutex is cloned
         let handle = thread::spawn(move || {
             let squared = num * num;
+            // push is done through lock
             result.lock().unwrap().push(squared);
         });
         handles.push(handle);

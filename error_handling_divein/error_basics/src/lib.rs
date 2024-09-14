@@ -4,8 +4,6 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 
-
-
 pub fn libmain() -> f32 {
     42.0
 }
@@ -23,15 +21,14 @@ pub fn take_args_match() {
     let mut args = argv.into_iter();
     println!("The args are: {:?}", args);
     // using match which unwrap does for us
-    let first = match args.nth(0){
+    let first = match args.nth(0) {
         Some(val) => val,
-        None => "No val".to_owned() 
-        // we can panic here, then it become unwrap() 
+        None => "No val".to_owned(), // we can panic here, then it become unwrap()
     };
     // this makes sense, when nth(0) is called, the val is consumed
-    let second = match args.nth(0){
+    let second = match args.nth(0) {
         Some(val) => val,
-        None => "No val".to_owned()
+        None => "No val".to_owned(),
     };
 
     println!("First: {}, Second: {}", first, second);
@@ -50,40 +47,44 @@ pub fn take_args_unwrap() {
 
     let arg: String = argv.nth(0).expect("got nothing, expecting a number");
     // and it has to be a number
-    let n: i32 = arg.parse().unwrap(); // will throw error 
+    let n: i32 = arg.parse().unwrap(); // will throw error
     println!("Double: {}", n * 2);
 }
 
 // The return of the Option, implicitly contains the None
+// Nope, it tells compiler that there can be a None returned
 // check this guys usage
 pub fn find(haystack: &str, needle: char) -> Option<usize> {
-    for(offset, c) in haystack.char_indices() {
+    for (offset, c) in haystack.char_indices() {
         // above will loop on the string characters
         if c == needle {
-            return Some(offset)
+            return Some(offset);
         }
     }
     None
 }
 
 pub fn extension_exp(filename: &str) -> Option<&str> {
-    match find(filename, '.'){
+    match find(filename, '.') {
         None => None,
-        Some(i) => Some(&filename[i+1..]),
+        Some(i) => Some(&filename[i + 1..]),
     }
 }
 
-pub fn map<F, T, A>(option:Option<T>, f: F) -> Option<A> where F: FnOnce(T) -> A {
+pub fn map<F, T, A>(option: Option<T>, f: F) -> Option<A>
+where
+    F: FnOnce(T) -> A,
+{
     match option {
         None => None,
         Some(val) => Some(f(val)),
     }
 }
 
-// returns the extension of the filename, where extension is 
+// returns the extension of the filename, where extension is
 // defined as all characters after first .
 pub fn extension(file_name: &str) -> Option<&str> {
-    find(file_name, '.').map(|i| &file_name[i+1..])
+    find(file_name, '.').map(|i| &file_name[i + 1..])
 }
 // Following code is commented as it conflicts with std::result::Result
 // pub enum Result<T, E> {
@@ -109,19 +110,16 @@ type localResult<T> = Result<T, ParseIntError>;
 pub fn double_number(num_str: &str) -> localResult<i32> {
     match num_str.parse::<i32>() {
         Ok(n) => Ok(n * 2),
-        Err(err) => Err(err)
+        Err(err) => Err(err),
     }
 }
 
-
 pub fn double_arg(mut argv: std::env::Args) -> Result<i32, String> {
-     
     argv.nth(1)
         .ok_or("please give one arg in cli".to_owned())
         .and_then(|arg| arg.parse::<i32>().map_err(|err| err.to_string()))
         .map(|i| i * 2)
 }
-
 
 pub fn ok_or<T, E>(option: Option<T>, err: E) -> Result<T, E> {
     match option {
@@ -131,7 +129,7 @@ pub fn ok_or<T, E>(option: Option<T>, err: E) -> Result<T, E> {
 }
 
 // function that simply opens file and panics if there is erro
-// 3 errors, opening, reading file, and parsing file data 
+// 3 errors, opening, reading file, and parsing file data
 // all are diffrent errors to be handled
 fn file_double<P: AsRef<Path>>(file_path: P) -> i32 {
     let mut file = File::open(file_path).unwrap(); // error 1
@@ -142,20 +140,22 @@ fn file_double<P: AsRef<Path>>(file_path: P) -> i32 {
 }
 
 fn file_double_result<P: AsRef<Path>>(file_path: P) -> Result<i32, String> {
-    // all of the process is done on the file, 
+    // all of the process is done on the file,
     File::open(file_path)
-         .map_err(|err| err.to_string())
-         .and_then(|mut file| {
-              let mut contents = String::new();
-              file.read_to_string(&mut contents)
-                  .map_err(|err| err.to_string())
-                  .map(|_| contents)
-         })
-         .and_then(|contents| {
-              contents.trim().parse::<i32>()
-                      .map_err(|err| err.to_string())
-         })
-         .map(|n| 2 * n)
+        .map_err(|err| err.to_string())
+        .and_then(|mut file| {
+            let mut contents = String::new();
+            file.read_to_string(&mut contents)
+                .map_err(|err| err.to_string())
+                .map(|_| contents)
+        })
+        .and_then(|contents| {
+            contents
+                .trim()
+                .parse::<i32>()
+                .map_err(|err| err.to_string())
+        })
+        .map(|n| 2 * n)
     // after all the above 14 lines of code, i32 is retuned as Result
 }
 
@@ -190,18 +190,14 @@ fn file_double_simpler<P: AsRef<Path>>(file_path: P) -> Result<i32, String> {
 // }
 
 fn file_double_tryop<P: AsRef<Path>>(file_path: P) -> Result<i32, String> {
-    let mut file = File::open(file_path)
-        .map_err(|e| e.to_string())?;
+    let mut file = File::open(file_path).map_err(|e| e.to_string())?;
 
     let mut contents = String::new();
 
     file.read_to_string(&mut contents)
         .map_err(|e| e.to_string())?;
 
-    let n = contents
-        .trim()
-        .parse::<i32>()
-        .map_err(|e| e.to_string())?;
+    let n = contents.trim().parse::<i32>().map_err(|e| e.to_string())?;
 
     Ok(2 * n)
 }
@@ -209,7 +205,7 @@ fn file_double_tryop<P: AsRef<Path>>(file_path: P) -> Result<i32, String> {
 #[derive(Debug)]
 enum CliError {
     IoError(std::io::Error),
-    ParseError(num::ParseIntError)
+    ParseError(num::ParseIntError),
 }
 
 use std::io;
@@ -229,10 +225,9 @@ impl From<num::ParseIntError> for CliError {
 fn file_double_comp<P: AsRef<Path>>(file_path: P) -> Result<i32, CliError> {
     let mut file = File::open(file_path).map_err(CliError::IoError)?;
     let mut contents = String::new();
-    file.read_to_string(&mut contents).map_err(CliError::IoError)?;
-    let n: i32 = contents.trim()
-        .parse()
-        .map_err(CliError::ParseError)?;
+    file.read_to_string(&mut contents)
+        .map_err(CliError::IoError)?;
+    let n: i32 = contents.trim().parse().map_err(CliError::ParseError)?;
     Ok(n * 2)
 }
 // best way to handle the error

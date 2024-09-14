@@ -1,5 +1,5 @@
 [workspace]
-members = [ "error_advs",
+members = [ "prac01",
   "error_basics"
 , "error_divein"]
 

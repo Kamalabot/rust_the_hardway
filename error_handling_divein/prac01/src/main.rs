@@ -78,6 +78,10 @@ fn main() {
     let new_string_o = send_error_str(3).unwrap();
     // unwrap internally calls panic!
     println!("Returned value at the end: {}", new_string_o);
+    // take_args_unwrap()
+    let cliarg = take_args_result();
+    println!("Cliarg is {:?}", cliarg);
+    println!("We will still see this output")
 }
 #[derive(Debug)]
 struct CustomError;
@@ -101,8 +105,59 @@ fn take_args_unwrap() {
     let mut argv = std::env::args();
 
     let arg: String = argv.nth(0).unwrap();
+    // this will simply panic if the arg is missing
+    println!("got the bin: {}", arg);
+
+    let cli1: String = argv.nth(0).unwrap();
+    println!("got the cli : {}", arg);
+    // How will you catch this from panic
 }
 
+// below implementation doesn't work
+// fn take_args_reterror() -> Error {
+//     let mut argv = std::env::args();
+//     let bin: String = argv.nth(0);
+//     match bin {
+//         Ok(s) => println!("bin is: {}", s),
+//         Err(e) => Err(e),
+//     }
+// }
+
+// use std::io::Error;
+
+// here we are trying to catch error
+// from another function. We are not creating
+// it
+fn take_args_result() -> Result<String, String> {
+    let mut argv = std::env::args();
+    let bin = argv.nth(0);
+    // check what the fn / method is returning
+    // then try to match it, and return Error
+    match bin {
+        // Some(s) => Ok(s),
+        Some(ref s) => {
+            println!("Bin is {}:", s);
+            Ok(s)
+        }
+        None => Err("There is no 1st cli arg".to_string()),
+    };
+    println!("Caught the bin: {:?}", bin);
+    let arg1 = argv.nth(0);
+    // check what the fn / method is returning
+    // then try to match it
+    match arg1 {
+        Some(s) => Ok(s),
+        None => Err("There is no 2nd cli arg".to_string()),
+    }
+}
+use std::result::Result;
+
+fn take_args_idiomatic() -> Result<String, String> {
+    let mut argv = std::env::args();
+    let temp = argv.nth(0)
+    let farg = argv.nth(0).ok_or("Issue with bin".to_owned());
+    Ok(farg)
+}
 fn send_error(n: i32) -> Result<bool, &'static str> {
     if n < 5 {
         Ok(true)
@@ -118,6 +173,7 @@ fn send_error_str(n: i32) -> Result<bool, String> {
         Err("This is a simple error".to_string())
     }
 }
+
 fn send_custerror(n: i32) -> Result<bool, CustomError> {
     if n < 5 {
         Ok(true)

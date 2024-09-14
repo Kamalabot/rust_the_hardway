@@ -116,7 +116,9 @@ pub fn double_number(num_str: &str) -> localResult<i32> {
 
 pub fn double_arg(mut argv: std::env::Args) -> Result<i32, String> {
     argv.nth(1)
+        // converts the option to result
         .ok_or("please give one arg in cli".to_owned())
+        //
         .and_then(|arg| arg.parse::<i32>().map_err(|err| err.to_string()))
         .map(|i| i * 2)
 }

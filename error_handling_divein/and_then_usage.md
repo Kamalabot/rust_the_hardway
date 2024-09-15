@@ -37,7 +37,8 @@ For `Result`, `and_then` is used to chain computations where each step might pro
 
 ```rust
 fn parse_number(s: &str) -> Result<i32, &str> {
-    s.parse::<i32>().map_err(|_| "Parse error")
+    s.parse::<i32>()
+        .map_err(|_| "Parse error")
 }
 
 fn square_if_positive(x: i32) -> Result<i32, &str> {

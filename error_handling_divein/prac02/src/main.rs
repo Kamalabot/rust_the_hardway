@@ -11,6 +11,9 @@ use std::io::stdin;
 #[derive(Debug)]
 struct CustomError;
 
+#[derive(Debug)]
+struct AnotherError;
+
 impl Display for CustomError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "Erroring out")
@@ -25,6 +28,13 @@ fn is_greater(x: i32) -> Result<i32, CustomError> {
     }
 }
 
+fn is_greater_er(x: i32) -> Result<i32, String> {
+    if x < 5 {
+        Ok(x)
+    } else {
+        Err(format!("{:?}", AnotherError))
+    }
+}
 fn cliargs() {
     let mut argv = std::env::args();
     // let arg1 = argv.nth(0).unwrap();
@@ -106,6 +116,32 @@ fn file_reterr<P: AsRef<Path>>(file_path: P) -> Result<i32, String> {
     //
 }
 
+fn ret_enum_error<P: AsRef<Path>>(file_path: P) -> Result<i32, String> {
+    let mut raw = match File::open(file_path) {
+        Ok(file) => file,
+        Err(e) => return Err(e.to_string()),
+        // why adding return made the analyzer to
+        // accept seemingly incompatible return types
+    };
+    let mut contents = String::new();
+    if let Err(err) = raw.read_to_string(&mut contents) {
+        return Err(err.to_string());
+    }
+    let n: i32 = match contents.trim().parse() {
+        Ok(n) => n,
+        Err(err) => return Err(err.to_string()),
+    };
+    // The ? operator does the same thing as the
+    // match with return—it propagates the error
+    // if there is one. It's essentially syntactic
+    // sugar to make error handling less verbose.
+    Ok(2 * n)
+    // below wont worck
+    // let n = match contents.trim().parse::<i32>() {
+    //     Ok(n) => n,
+    //     Err(e) => Err(e.to_string()),
+    // };
+}
 fn easier_file<P: AsRef<Path>>(file_path: P) -> Result<i32, String> {
     let mut raw = match File::open(file_path) {
         Ok(file) => file,
@@ -207,4 +243,6 @@ fn main() {
     let readnum = file_reader("numfile.txt");
 
     println!("read num is: {}", readnum);
+    let x = is_greater_er(6);
+    println!("Got x: {:?}", x)
 }

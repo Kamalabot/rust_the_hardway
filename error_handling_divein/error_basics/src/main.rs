@@ -5,6 +5,7 @@ use error_basics::*;
 mod folder;
 mod prac;
 mod refactored;
+mod type_check;
 
 // OK, here are the conversions.
 let err1: Box<Error> = From::from(io_err);

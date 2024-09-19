@@ -1,0 +1,8 @@
+[package]
+name = "prac05"
+version.workspace = true
+edition.workspace = true
+description.workspace = true
+repository.workspace = true
+
+[dependencies]

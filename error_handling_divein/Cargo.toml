@@ -1,7 +1,7 @@
 [workspace]
 members = [ "prac01",
   "error_basics"
-, "error_divein", "andthen", "prac02", "prac03", "prac04"]
+, "error_divein", "andthen", "prac02", "prac03", "prac04", "prac05"]
 
 resolver = "2"
 

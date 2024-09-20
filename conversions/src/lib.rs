@@ -1,3 +1,5 @@
+#![allow(warnings)]
+
 use ::std::fmt;
 use ::std::num::ParseFloatError;
 use ::std::num::ParseIntError;
@@ -23,6 +25,9 @@ struct Farenheit(f64);
 // two custom structs
 impl From<Farenheit> for Celsius {
     fn from(f: Farenheit) -> Celsius {
+        // .0 below is the first elem inside
+        // Celsius tuple, its not for converting
+        // int to float
         Celsius((f.0 - 32.0) * 5.0 / 9.0)
     }
 }

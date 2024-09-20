@@ -1,3 +1,5 @@
+#[allow(unused_imports)]
+
 pub struct User {
     pub name: String,
     pub age: u8,
@@ -86,17 +88,17 @@ pub fn idiomatic1() {
     // let res_vec: Result<Vec<&str>, _> =
     //     Result(Ok(vec!["5", "6", "8", "7"]), Err("something is wron"));
 
-    let res_vec: Result<Vec<&str>, &str> = Ok(vec!["5", "6", "8", "7"]);
+    // let res_vec: Result<Vec<&str>, &str> = Ok(vec!["5", "6", "8", "7"]);
 
-    let out_res = res_vec.unwrap();
+    // let out_res = res_vec;
 
-    let proc_out: Result<Vec<i32>, String> = out_res
-        .into_iter()
-        // .map(|x| x.parse::<i32>().map_err(|_| "Invalid input".to_string()))
-        .map(|x| x.parse::<i32>().map_err(|_| ParseIntError))
-        .collect();
-    println!("Output Res: {:?}", proc_out);
+    // let proc_out: Result<Vec<&str>, String> = out_res
+    //     .into_iter()
+    //     .map(|x| x.parse::<i32>().map_err(|_| "invalid_input".to_owned()))
+    //     .collect();
+    // println!("Output Res: {:?}", proc_out);
     // can the map_err take a ParseIntError
+    // nope it will error
 }
 
 use std::collections::HashMap;

@@ -7,6 +7,10 @@ use tokio_divein::*;
 async fn main() {
     // if not unwrap, then need the main
     // to return Result
+    let sum_async = add_num(5, 6);
+    println!("Output is {:?}", sum_async.await.unwrap());
+    let sum_sync = add_sync(12, 25);
+    println!("Output of sync add: {}", sum_sync);
     // rw_file().await.unwrap();
     // tcp_listener().await.unwrap();
     // task_spawner().await;
@@ -19,5 +23,5 @@ async fn main() {
     // http_server().await;
     // barrier_example().await;
     // async_mutex().await;
-    useful_semaphore().await;
+    // useful_semaphore().await;
 }

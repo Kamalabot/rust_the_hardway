@@ -1,3 +1,6 @@
+#![allow(unused_imports)]
+#![allow(warnings)]
+
 use std::fs::File;
 use std::io::{self, Read, Write};
 use std::num::ParseIntError;
@@ -5,37 +8,41 @@ use std::str::FromStr;
 use std::{error::Error, fmt};
 
 mod inmod;
+mod prac_inmod0;
 
 use inmod::*;
+use prac_inmod0::*;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    println!("Hello, world!");
-    let path = "error_handling_notes.md";
-    // the inmod has open_file implemented with
-    // io::Error throw, which is caught here
-    let cont: String = open_file(path)?;
-    println!("Extracted string: {}", cont);
+    // println!("Hello, world!");
+    // let path = "error_handling_notes.md";
+    // // the inmod has open_file implemented with
+    // // io::Error throw, which is caught here
+    // let cont: String = open_file(path)?;
+    // println!("Extracted string: {}", cont);
 
-    // using unwrap_or following unwrap on return value
-    let opt1 = Some("65");
-    let parse_opt1 = opt1.unwrap_or("0").parse::<i32>();
-    println!("Unwrap and parse: {:?}", parse_opt1.unwrap());
+    // // using unwrap_or following unwrap on return value
+    // let opt1 = Some("65");
+    // let parse_opt1 = opt1.unwrap_or("0").parse::<i32>();
+    // println!("Unwrap and parse: {:?}", parse_opt1.unwrap());
 
-    let num = validate_number("66")?;
-    println!("Double num: {}", num * 2);
+    // let num = validate_number("66")?;
+    // println!("Double num: {}", num * 2);
 
-    // working on options and unwrapping them
-    let instr = "This is a long worded sentence.";
-    let word = "long";
-    let present = instr.find(word);
-    println!("Unwrapping the present: {}", present.unwrap());
+    // // working on options and unwrapping them
+    // let instr = "This is a long worded sentence.";
+    // let word = "long";
+    // let present = instr.find(word);
+    // println!("Unwrapping the present: {}", present.unwrap());
 
-    // working with iterators
-    let invec = vec!["6", "5", "9", "3"];
-    let parse_vec: Vec<Result<i32, ParseIntError>> =
-        invec.into_iter().map(|s| s.parse::<i32>()).collect();
-    println!("Printing parsed vector {:?}", parse_vec);
-    let _ = err_main();
+    // // working with iterators
+    // let invec = vec!["6", "5", "9", "3"];
+    // let parse_vec: Vec<Result<i32, ParseIntError>> =
+    //     invec.into_iter().map(|s| s.parse::<i32>()).collect();
+    // println!("Printing parsed vector {:?}", parse_vec);
+    // let _ = err_main();
+    let d = pmod0()?;
+    println!("Output is {}", d);
     Ok(())
 }
 

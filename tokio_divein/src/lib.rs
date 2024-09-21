@@ -22,14 +22,28 @@ use tokio::sync::{mpsc, oneshot};
 use tokio::task;
 use tokio::time::{self, sleep, Duration, Instant};
 
+// write a simple function that adds two numbers
 // create file and write_all some content to it
 // create vector buffer and read it back
 // convert the read buffer into string using from_utf8
 // write a tcp handler and listener
+// write a http server
+// write a udp server
 // spawn tasks inside tokio, and run loops with different wait times
 // spawn oneshot channel and send data
 // spawn multi-sender single reciever channel
+// create a barrier for two tasks to sync
+// work on the semaphore to rate_limit database connects
 //
+pub fn add_sync(a: i32, b: i32) -> i32 {
+    a + b
+}
+pub async fn add_num(a: i32, b: i32) -> io::Result<i32> {
+    // any function can be declared as async, and
+    // made to return Futures,
+    // which can be awaited to be executed later when the data is available
+    Ok(a + b)
+}
 pub async fn rw_file() -> io::Result<()> {
     let mut file = File::create("async.foo").await?;
     file.write_all(b"Hey Rusty...").await?;

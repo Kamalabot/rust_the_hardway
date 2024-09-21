@@ -175,6 +175,7 @@ fn easier_file<P: AsRef<Path>>(file_path: P) -> Result<i32, String> {
 // errors in functions that return a Result.
 // The Err(err.to_string()) converts the error to a string and propagates it up the call stack.
 //
+// Basically this help to convert and return error
 #[derive(Debug)]
 enum CliError {
     IoError(std::io::Error),
@@ -193,6 +194,14 @@ impl From<std::num::ParseIntError> for CliError {
     fn from(err: std::num::ParseIntError) -> CliError {
         CliError::ParseError(err)
     }
+}
+
+fn read_number_from_file(file_path: &str) -> Result<i32, CliError> {
+    let mut file = File::open(file_path)?;
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;
+    let number: i32 = contents.trim().parse()?;
+    Ok(number)
 }
 // The map_err method is used to transform one type of
 // error into another. In this case, CliError is an

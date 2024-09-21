@@ -121,6 +121,8 @@ pub fn read_file_and_double_numbers(file_path: &str) -> Result<Vec<i32>, Box<dyn
 pub enum MyError {
     #[error("Invalid input: {0}")]
     InvalidInput(String),
+    // the sqr bracket is decorator
+    // not an enum
     #[error(transparent)]
     Io(#[from] io::Error),
     #[error(transparent)]
@@ -151,4 +153,24 @@ pub fn read_file(file_path: &str) -> Result<String, MyError> {
 pub fn parse_number(input: &str) -> Result<i32, MyError> {
     let num: i32 = input.parse()?;
     Ok(num)
+}
+
+// Function that reads numbers from a file and sums them
+pub fn read_parse_err(file_path: &str) -> Result<i32, MyError> {
+    // Open the file; errors here will be converted to MyError::Io automatically
+    let mut file = File::open(file_path)?;
+
+    // Read file content into a string
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;
+
+    // Parse the contents into numbers and sum them
+    let sum: i32 = contents
+        .lines()
+        .map(|line| line.trim().parse::<i32>()) // Parse each line as an integer
+        .collect::<Result<Vec<_>, _>>()? // Collect the results, handling parse errors
+        .iter()
+        .sum(); // Sum the parsed integers
+
+    Ok(sum)
 }

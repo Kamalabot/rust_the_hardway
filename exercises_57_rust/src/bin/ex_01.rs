@@ -1,3 +1,5 @@
+#![allow(warnings)]
+use std::fs::*;
 use std::io::*;
 
 fn main() {
